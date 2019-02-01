@@ -1,5 +1,0 @@
-D:\Dev\rpg-request-tracker\QuestTracker.SQL\bin\Debug\QuestTracker.SQL.dacpac
-D:\Dev\rpg-request-tracker\QuestTracker.SQL\bin\Debug\QuestTracker.SQL.dll
-D:\Dev\rpg-request-tracker\QuestTracker.SQL\bin\Debug\QuestTracker.SQL.pdb
-D:\Dev\rpg-request-tracker\QuestTracker.SQL\obj\Debug\QuestTracker.SQL.dll
-D:\Dev\rpg-request-tracker\QuestTracker.SQL\obj\Debug\QuestTracker.SQL.pdb
