@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security.OAuth;
+using QuestTracker.API.Infrastructure;
 
 namespace QuestTracker.API.Providers
 {
@@ -23,7 +24,7 @@ namespace QuestTracker.API.Providers
 
             using (AuthRepository _repo = new AuthRepository())
             {
-                IdentityUser user = await _repo.FindUser(context.UserName, context.Password);
+                ApplicationUser user = await _repo.FindUser(context.UserName, context.Password);
 
                 if (user == null)
                 {

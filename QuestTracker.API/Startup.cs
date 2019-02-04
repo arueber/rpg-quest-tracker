@@ -3,10 +3,13 @@ using Owin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Formatting;
 using System.Web;
 using System.Web.Http;
 using Microsoft.Owin.Security.OAuth;
+using Newtonsoft.Json.Serialization;
 using QuestTracker.API.Providers;
+using QuestTracker.API.Infrastructure;
 
 [assembly: OwinStartup(typeof(QuestTracker.API.Startup))]
 namespace QuestTracker.API
@@ -15,19 +18,26 @@ namespace QuestTracker.API
     {
         public void Configuration(IAppBuilder app)
         {
-            HttpConfiguration config = new HttpConfiguration();
+            HttpConfiguration httpConfig = new HttpConfiguration();
 
-            ConfigureOAuth(app);
+            ConfigureOAuthTokenGeneration(app);
 
-            WebApiConfig.Register(config);
+            ConfigureWebApi(httpConfig);
+
+            // WebApiConfig.Register(httpConfig);
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
-            app.UseWebApi(config);
+            app.UseWebApi(httpConfig);
         }
 
 
 
-        public void ConfigureOAuth(IAppBuilder app)
+        public void ConfigureOAuthTokenGeneration(IAppBuilder app)
         {
+            // Configure the db context and user manager to use a single instance per request
+            app.CreatePerOwinContext(AuthContext.Create);
+            app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
+
+            // Plugin the OAuth bearer JSON Web Token tokens generation and Consumption will be here
             OAuthAuthorizationServerOptions OAuthServerOptions = new OAuthAuthorizationServerOptions()
             {
                 AllowInsecureHttp = true,
@@ -40,6 +50,14 @@ namespace QuestTracker.API
             app.UseOAuthAuthorizationServer(OAuthServerOptions);
             app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
 
+        }
+
+        private void ConfigureWebApi(HttpConfiguration config)
+        {
+            config.MapHttpAttributeRoutes();
+
+            var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
+            jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
         }
 
 

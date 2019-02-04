@@ -8,7 +8,7 @@ using System.Web.Http;
 namespace QuestTracker.API.Controllers
 {
     [RoutePrefix("api/Orders")]
-    public class OrdersController : ApiController
+    public class OrdersController : BaseApiController
     {
         [Authorize]
         [Route("")]
