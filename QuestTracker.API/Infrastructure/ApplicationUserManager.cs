@@ -22,6 +22,21 @@ namespace QuestTracker.API.Infrastructure
             var authContext = context.Get<AuthContext>();
             var appUserManager = new ApplicationUserManager(new UserStore<ApplicationUser>(authContext));
 
+            appUserManager.UserValidator = new UserValidator<ApplicationUser>(appUserManager)
+            {
+                AllowOnlyAlphanumericUserNames = true,
+                RequireUniqueEmail = true
+            };
+
+            appUserManager.PasswordValidator = new PasswordValidator
+            {
+                RequiredLength = 8,
+                RequireNonLetterOrDigit = true,
+                RequireDigit = true,
+                RequireLowercase = true,
+                RequireUppercase = true
+            };
+
             appUserManager.EmailService = new EmailService();
 
             var dataProtectionProvider = options.DataProtectionProvider;
