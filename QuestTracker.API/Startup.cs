@@ -1,4 +1,9 @@
 ﻿using Microsoft.Owin;
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.DataHandler.Encoder;
+using Microsoft.Owin.Security.Jwt;
+using Microsoft.Owin.Security.OAuth;
+using Newtonsoft.Json.Serialization;
 using Owin;
 using System;
 using System.Collections.Generic;
@@ -7,11 +12,6 @@ using System.Linq;
 using System.Net.Http.Formatting;
 using System.Web;
 using System.Web.Http;
-using Microsoft.Owin.Security;
-using Microsoft.Owin.Security.DataHandler.Encoder;
-using Microsoft.Owin.Security.Jwt;
-using Microsoft.Owin.Security.OAuth;
-using Newtonsoft.Json.Serialization;
 using QuestTracker.API.Providers;
 using QuestTracker.API.Infrastructure;
 
@@ -30,9 +30,8 @@ namespace QuestTracker.API
 
             ConfigureOAuthTokenConsumption(app);
 
-            ConfigureWebApi(httpConfig);
+            WebApiConfig.Register(httpConfig);
 
-            // WebApiConfig.Register(httpConfig);
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
             app.UseWebApi(httpConfig);
         }
@@ -44,6 +43,7 @@ namespace QuestTracker.API
             // Configure the db context and user manager to use a single instance per request
             app.CreatePerOwinContext(AuthContext.Create);
             app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
+            app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);
 
             // Plugin the OAuth bearer JSON Web Token tokens generation and Consumption will be here
             OAuthAuthorizationServerOptions OAuthServerOptions = new OAuthAuthorizationServerOptions()
@@ -58,14 +58,6 @@ namespace QuestTracker.API
 
             // Token Generation
             app.UseOAuthAuthorizationServer(OAuthServerOptions);
-        }
-
-        private void ConfigureWebApi(HttpConfiguration config)
-        {
-            config.MapHttpAttributeRoutes();
-
-            var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
-            jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
         }
 
         private void ConfigureOAuthTokenConsumption(IAppBuilder app)
@@ -87,6 +79,5 @@ namespace QuestTracker.API
                 }
             });
         }
-
     }
 }

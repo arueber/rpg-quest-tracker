@@ -11,7 +11,8 @@ namespace QuestTracker.API.Infrastructure
         public AuthContext()
             : base("AuthContext")
         {
-
+            Configuration.ProxyCreationEnabled = false;
+            Configuration.LazyLoadingEnabled = false;
         }
 
         public static AuthContext Create()

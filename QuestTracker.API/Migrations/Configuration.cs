@@ -13,7 +13,7 @@ namespace QuestTracker.API.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = true;
+            AutomaticMigrationsEnabled = false;
             ContextKey = "QuestTracker.API.AuthContext";
         }
 
@@ -23,6 +23,8 @@ namespace QuestTracker.API.Migrations
 
             var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new AuthContext()));
 
+            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(new AuthContext()));
+            
             var user = new ApplicationUser()
             {
                 UserName = "SuperPowerUser",
@@ -34,6 +36,18 @@ namespace QuestTracker.API.Migrations
             };
 
             manager.Create(user, "MySuperP@ssword!");
+
+            if (roleManager.Roles.Count() == 0)
+            {
+                roleManager.Create(new IdentityRole {Name = "SuperAdmin"});
+                roleManager.Create(new IdentityRole {Name = "Admin"});
+                roleManager.Create(new IdentityRole {Name = "Owner"});
+                roleManager.Create(new IdentityRole {Name = "User"});
+            }
+
+            var adminUser = manager.FindByName("SuperPowerUser");
+
+            manager.AddToRoles(adminUser.Id, new string[] {"SuperAdmin", "Admin"});
         }
     }
 }

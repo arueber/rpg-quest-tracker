@@ -182,21 +182,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Infrastructure\AuthRepository.cs" />
+    <Compile Include="Controllers\RolesController.cs" />
+    <Compile Include="Infrastructure\ApplicationRoleManager.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Infrastructure\ApplicationUserManager.cs" />
     <Compile Include="Infrastructure\AuthContext.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
-    <Compile Include="Migrations\201901302106069_InitialCreate.cs" />
-    <Compile Include="Migrations\201901302106069_InitialCreate.Designer.cs">
-      <DependentUpon>201901302106069_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\201902071547000_InitialCreate.cs" />
+    <Compile Include="Migrations\201902071547000_InitialCreate.Designer.cs">
+      <DependentUpon>201902071547000_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Infrastructure\ApplicationUser.cs" />
-    <Compile Include="Models\CreateUserBindingModel.cs" />
+    <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\ModelFactory.cs" />
-    <Compile Include="Models\UserModel.cs" />
+    <Compile Include="Models\RoleBindingModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\CustomJwtFormat.cs" />
     <Compile Include="Providers\CustomOAuthProvider.cs" />
@@ -216,8 +217,8 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201901302106069_InitialCreate.resx">
-      <DependentUpon>201901302106069_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201902071547000_InitialCreate.resx">
+      <DependentUpon>201902071547000_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

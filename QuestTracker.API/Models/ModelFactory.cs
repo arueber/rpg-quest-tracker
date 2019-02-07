@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http.Routing;
+using Microsoft.AspNet.Identity.EntityFramework;
 using QuestTracker.API.Infrastructure;
 
 namespace QuestTracker.API.Models
@@ -34,6 +35,16 @@ namespace QuestTracker.API.Models
                 Claims = _AppUserManager.GetClaimsAsync(appUser.Id).Result
             };
         }
+
+        public RoleReturnModel Create(IdentityRole appRole)
+        {
+            return new RoleReturnModel
+            {
+                Url = _UrlHelper.Link("GetRoleById", new { id = appRole.Id}),
+                Id = appRole.Id,
+                Name = appRole.Name
+            };
+        }
     }
 
     public class UserReturnModel
@@ -47,5 +58,12 @@ namespace QuestTracker.API.Models
         public DateTime JoinDate { get; set; }
         public IList<string> Roles { get; set; }
         public IList<System.Security.Claims.Claim> Claims { get; set; }
+    }
+
+    public class RoleReturnModel
+    {
+        public string Url { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
     }
 }
