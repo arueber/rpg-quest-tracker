@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using QuestTracker.API.Infrastructure;
 using QuestTracker.API.Models;
+using QuestTracker.API.Helpers;
+using OtpNet;
 
 namespace QuestTracker.API.Controllers
 {
@@ -37,10 +39,10 @@ namespace QuestTracker.API.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [Route("user/{username}")]
-        public async Task<IHttpActionResult> GetUserByName(string username)
+        [Route("user/{email}")]
+        public async Task<IHttpActionResult> GetUserByEmail(string email)
         {
-            var user = await this.AppUserManager.FindByNameAsync(username);
+            var user = await this.AppUserManager.FindByEmailAsync(email);
 
             if (user != null)
             {
@@ -53,8 +55,8 @@ namespace QuestTracker.API.Controllers
 
         // POST api/Accounts/CreateUser
         [AllowAnonymous]
-        [Route("create")]
-        public async Task<IHttpActionResult> CreateUser(CreateUserBindingModel createUserModel)
+        [Route("register")]
+        public async Task<IHttpActionResult> Register(CreateUserBindingModel createUserModel)
         {
             if (!ModelState.IsValid)
             {
@@ -63,18 +65,19 @@ namespace QuestTracker.API.Controllers
 
             var user = new ApplicationUser()
             {
-                UserName = createUserModel.Username,
+                UserName = createUserModel.Email,
                 Email = createUserModel.Email,
-                FirstName = createUserModel.FirstName,
-                LastName = createUserModel.LastName,
                 JoinDate = DateTime.Now.Date,
+                TwoFactorEnabled = true,
+                PSK = OtpHelper.GenerateSharedPrivateKey()
             };
 
-            IdentityResult addUserResult = await this.AppUserManager.CreateAsync(user, createUserModel.Password);
+            IdentityResult addUserResult = await this.AppUserManager.CreateAsync(user);
+            IHttpActionResult errorResult = GetErrorResult(addUserResult);
 
-            if (!addUserResult.Succeeded)
+            if (errorResult != null)
             {
-                return GetErrorResult(addUserResult);
+                return errorResult;
             }
 
             string code = await this.AppUserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -90,11 +93,11 @@ namespace QuestTracker.API.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("ConfirmEmail", Name = "ConfirmEmailRoute")]
-        public async Task<IHttpActionResult> ConfirmEmail(string userId = "", string password = "", string code = "")
+        public async Task<IHttpActionResult> ConfirmEmail(string userId = "", string code = "")
         {
-            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(code) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(code))
             {
-                ModelState.AddModelError("", "User Id, Password, and Code are required");
+                ModelState.AddModelError("", "User Id and Code are required");
                 return BadRequest(ModelState);
             }
             
@@ -104,26 +107,17 @@ namespace QuestTracker.API.Controllers
             {
                 return NotFound();
             }
-            // check for credentials before confirm email
-            bool validCredentials = await this.AppUserManager.CheckPasswordAsync(user, password);
-            if (validCredentials)
-            {
+            
                 IdentityResult result = await this.AppUserManager.ConfirmEmailAsync(userId, code);
 
                 if (result.Succeeded)
                 {
-                    return Ok();
+                    return Ok(new { PSK = user.PSK }); // TODO setup account detail completion:  [FirstName],[LastName],[PhoneNumber],[PhoneNumberConfirmed]
                 }
                 else
                 {
                     return GetErrorResult(result);
                 }
-            }
-            else
-            {
-                ModelState.AddModelError("", "The password is incorrect.");
-                return BadRequest(ModelState);
-            }
         }
 
         [Authorize(Roles = "Admin")]

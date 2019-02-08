@@ -42,10 +42,28 @@ namespace QuestTracker.API.Providers
             }
 
             ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(userManager, "JWT");
+            
+            var props = new AuthenticationProperties(new Dictionary<string, string>
+            {
+                {
+                    "userName", context.UserName
+                }
+            });
 
-            var ticket = new AuthenticationTicket(oAuthIdentity, null);
+            var ticket = new AuthenticationTicket(oAuthIdentity, props);
 
             context.Validated(ticket);
+        }
+
+        public override Task TokenEndpoint(OAuthTokenEndpointContext context)
+        {
+
+            foreach (KeyValuePair<string, string> property in context.Properties.Dictionary)
+            {
+                context.AdditionalResponseParameters.Add(property.Key, property.Value);
+            }
+
+            return Task.FromResult<object>(null);
         }
     }
 }

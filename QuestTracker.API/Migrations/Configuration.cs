@@ -1,5 +1,6 @@
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using QuestTracker.API.Helpers;
 using QuestTracker.API.Infrastructure;
 
 namespace QuestTracker.API.Migrations
@@ -27,12 +28,13 @@ namespace QuestTracker.API.Migrations
             
             var user = new ApplicationUser()
             {
-                UserName = "SuperPowerUser",
+                UserName = "a_rueber@mailinator.com",
                 Email = "a_rueber@mailinator.com",
                 EmailConfirmed = true,
                 FirstName = "A",
                 LastName = "Rueber",
-                JoinDate = DateTime.Now
+                JoinDate = DateTime.Now,
+                PSK = OtpHelper.GenerateSharedPrivateKey()
             };
 
             manager.Create(user, "MySuperP@ssword!");
@@ -45,7 +47,7 @@ namespace QuestTracker.API.Migrations
                 roleManager.Create(new IdentityRole {Name = "User"});
             }
 
-            var adminUser = manager.FindByName("SuperPowerUser");
+            var adminUser = manager.FindByName("a_rueber@mailinator.com");
 
             manager.AddToRoles(adminUser.Id, new string[] {"SuperAdmin", "Admin"});
         }

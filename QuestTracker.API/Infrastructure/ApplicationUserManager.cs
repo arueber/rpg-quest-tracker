@@ -24,7 +24,7 @@ namespace QuestTracker.API.Infrastructure
 
             appUserManager.UserValidator = new UserValidator<ApplicationUser>(appUserManager)
             {
-                AllowOnlyAlphanumericUserNames = true,
+                AllowOnlyAlphanumericUserNames = false,
                 RequireUniqueEmail = true
             };
 
@@ -44,8 +44,8 @@ namespace QuestTracker.API.Infrastructure
             {
                 appUserManager.UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser>(dataProtectionProvider.Create("ASP.NET Identity"))
                 {
-                    //Code for email confirmation and reset password life time
-                    TokenLifespan = TimeSpan.FromHours(6)
+                    //Code for email confirmation and login link
+                    TokenLifespan = TimeSpan.FromMinutes(15)
                 };
             }
 

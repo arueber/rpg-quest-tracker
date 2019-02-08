@@ -17,6 +17,7 @@ D:\Dev\rpg-request-tracker\QuestTracker.API\bin\Microsoft.Owin.Security.dll
 D:\Dev\rpg-request-tracker\QuestTracker.API\bin\Microsoft.Owin.Security.Jwt.dll
 D:\Dev\rpg-request-tracker\QuestTracker.API\bin\Microsoft.Owin.Security.OAuth.dll
 D:\Dev\rpg-request-tracker\QuestTracker.API\bin\Newtonsoft.Json.dll
+D:\Dev\rpg-request-tracker\QuestTracker.API\bin\Otp.NET.dll
 D:\Dev\rpg-request-tracker\QuestTracker.API\bin\Owin.dll
 D:\Dev\rpg-request-tracker\QuestTracker.API\bin\SendGrid.dll
 D:\Dev\rpg-request-tracker\QuestTracker.API\bin\System.IdentityModel.Tokens.Jwt.dll
@@ -59,7 +60,7 @@ D:\Dev\rpg-request-tracker\QuestTracker.API\bin\System.Web.Http.xml
 D:\Dev\rpg-request-tracker\QuestTracker.API\bin\System.Web.Http.Owin.xml
 D:\Dev\rpg-request-tracker\QuestTracker.API\bin\System.Web.Http.WebHost.xml
 D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.csprojResolveAssemblyReference.cache
-D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.Migrations.InitialCreate.resources
-D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.csproj.GenerateResource.Cache
 D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.dll
 D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.pdb
+D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.Migrations.InitialCreate.resources
+D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.csproj.GenerateResource.Cache
