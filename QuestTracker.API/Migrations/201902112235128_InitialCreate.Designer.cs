@@ -13,7 +13,7 @@ namespace QuestTracker.API.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201902082228094_InitialCreate"; }
+            get { return "201902112235128_InitialCreate"; }
         }
         
         string IMigrationMetadata.Source

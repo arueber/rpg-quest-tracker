@@ -39,6 +39,8 @@ namespace QuestTracker.API.Migrations
                         LastName = c.String(nullable: false, maxLength: 100),
                         JoinDate = c.DateTime(nullable: false),
                         PSK = c.String(nullable: false, maxLength: 16),
+                        IsActive = c.Boolean(nullable: false),
+                        PhotoURL = c.String(maxLength: 255),
                         Email = c.String(maxLength: 256),
                         EmailConfirmed = c.Boolean(nullable: false),
                         PasswordHash = c.String(),

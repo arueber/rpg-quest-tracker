@@ -42,6 +42,9 @@ namespace QuestTracker.API.Providers
             }
 
             ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(userManager, "JWT");
+            oAuthIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
+            oAuthIdentity.AddClaim(new Claim(ClaimTypes.Role, "User"));
+            oAuthIdentity.AddClaim(new Claim("PSK", user.PSK));
             
             var props = new AuthenticationProperties(new Dictionary<string, string>
             {

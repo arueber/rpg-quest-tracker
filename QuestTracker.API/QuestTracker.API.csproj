@@ -195,9 +195,9 @@
     <Compile Include="Infrastructure\ApplicationUserManager.cs" />
     <Compile Include="Infrastructure\AuthContext.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
-    <Compile Include="Migrations\201902082228094_InitialCreate.cs" />
-    <Compile Include="Migrations\201902082228094_InitialCreate.Designer.cs">
-      <DependentUpon>201902082228094_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\201902112235128_InitialCreate.cs" />
+    <Compile Include="Migrations\201902112235128_InitialCreate.Designer.cs">
+      <DependentUpon>201902112235128_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Infrastructure\ApplicationUser.cs" />
@@ -223,8 +223,8 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201902082228094_InitialCreate.resx">
-      <DependentUpon>201902082228094_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201902112235128_InitialCreate.resx">
+      <DependentUpon>201902112235128_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -27,6 +27,12 @@ namespace QuestTracker.API.Infrastructure
         [MaxLength(16)]
         public string PSK { get; set; }
 
+        [Required]
+        public bool IsActive { get; set; }
+
+        [MaxLength(255)]
+        public string PhotoURL { get; set; }
+
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager,
             string authenticationType)
         {

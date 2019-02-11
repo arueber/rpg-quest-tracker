@@ -32,8 +32,12 @@ namespace QuestTracker.API.Helpers
                         var correction = new TimeCorrection(correctTime);
                         totp = new Totp(base32Bytes, timeCorrection: correction);
                     }
+                    var totpCode = totp.ComputeTotp();
 
-                    if (totp.VerifyTotp(otp, out timeWindowUsed, VerificationWindow.RfcSpecifiedNetworkDelay))
+                    bool verified = totp.VerifyTotp(otp, out timeWindowUsed,
+                        VerificationWindow.RfcSpecifiedNetworkDelay);
+
+                    if (verified)
                     {
                         return true;
                     }
@@ -44,7 +48,7 @@ namespace QuestTracker.API.Helpers
 
         public static string GenerateSharedPrivateKey()
         {
-            var key = KeyGeneration.GenerateRandomKey(20);
+            var key = KeyGeneration.GenerateRandomKey(10);
             var base32String = Base32Encoding.ToString(key);
 
             return base32String;

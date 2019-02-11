@@ -34,7 +34,8 @@ namespace QuestTracker.API.Migrations
                 FirstName = "A",
                 LastName = "Rueber",
                 JoinDate = DateTime.Now,
-                PSK = OtpHelper.GenerateSharedPrivateKey()
+                PSK = OtpHelper.GenerateSharedPrivateKey(),
+                IsActive = true
             };
 
             manager.Create(user, "MySuperP@ssword!");
