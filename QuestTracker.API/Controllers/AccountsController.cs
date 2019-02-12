@@ -6,10 +6,10 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
+using QuestTracker.API.Filters;
 using QuestTracker.API.Infrastructure;
 using QuestTracker.API.Models;
 using QuestTracker.API.Helpers;
-using OtpNet;
 
 namespace QuestTracker.API.Controllers
 {
@@ -53,7 +53,7 @@ namespace QuestTracker.API.Controllers
 
         }
 
-        // POST api/Accounts/CreateUser
+        // POST api/Accounts/Register
         [AllowAnonymous]
         [Route("register")]
         public async Task<IHttpActionResult> Register(CreateUserBindingModel createUserModel)
@@ -69,7 +69,8 @@ namespace QuestTracker.API.Controllers
                 Email = createUserModel.Email,
                 JoinDate = DateTime.Now.Date,
                 TwoFactorEnabled = true,
-                PSK = OtpHelper.GenerateSharedPrivateKey()
+                PSK = OtpHelper.GenerateSharedPrivateKey(),
+                IsActive = true
             };
 
             IdentityResult addUserResult = await this.AppUserManager.CreateAsync(user);
@@ -84,6 +85,42 @@ namespace QuestTracker.API.Controllers
             var callbackUrl = new Uri(Url.Link("ConfirmEmailRoute", new {userId = user.Id, code = code }));
             await this.AppUserManager.SendEmailAsync(user.Id, "Confirm your account",
                 "Please confirm your account by click <a href=\"" + callbackUrl + "\">here</a>");
+
+            return Ok();
+        }
+
+        // POST api/Accounts/CreateUser
+        [Authorize(Roles = "Admin")]
+        [Route("register")]
+        public async Task<IHttpActionResult> CreateUser(CreateUserBindingModel createUserModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = new ApplicationUser()
+            {
+                UserName = createUserModel.Email,
+                Email = createUserModel.Email,
+                JoinDate = DateTime.Now.Date,
+                TwoFactorEnabled = true,
+                PSK = OtpHelper.GenerateSharedPrivateKey(),
+                IsActive = true
+            };
+
+            IdentityResult addUserResult = await this.AppUserManager.CreateAsync(user);
+            IHttpActionResult errorResult = GetErrorResult(addUserResult);
+
+            if (errorResult != null)
+            {
+                return errorResult;
+            }
+
+            string code = await this.AppUserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+            var callbackUrl = new Uri(Url.Link("ConfirmEmailRoute", new { userId = user.Id, code = code }));
+            await this.AppUserManager.SendEmailAsync(user.Id, "Confirm your account",
+                "You have been registered for the Quest Tracker App. Please confirm your account by click <a href=\"" + callbackUrl + "\">here</a>");
 
             Uri locationHeader = new Uri(Url.Link("GetUserById", new { id = user.Id }));
 
@@ -113,8 +150,9 @@ namespace QuestTracker.API.Controllers
                 if (result.Succeeded)
                 {
                     return Ok(new { PSK = user.PSK }); // TODO setup account detail completion:  [FirstName],[LastName],[PhoneNumber],[PhoneNumberConfirmed]
-                }
-                else
+                                                       // QRCode URL = HttpUtility.UrlEncode(KeyUrl.GetTotpUrl(Base32Encoder.Decode(user.PSK), user.Email) + "&issuer=QuestTracker")
+            }
+            else
                 {
                     return GetErrorResult(result);
                 }
@@ -124,7 +162,7 @@ namespace QuestTracker.API.Controllers
         [Route("user/{id:guid}")]
         public async Task<IHttpActionResult> DeleteUser(string id)
         {
-            // Only SuperAdmin or Admin can delete users (Later when implement roles)
+            // Only SuperAdmin or Admin can delete users 
 
             var appUser = await this.AppUserManager.FindByIdAsync(id);
 
@@ -141,6 +179,33 @@ namespace QuestTracker.API.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// Sets a user inactive instead of deleting the user. 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [TwoFactorAuthorize]
+        [Route("user/{id:guid}/setinactive")]
+        public async Task<IHttpActionResult> SetUserInactive(string id)
+        {
+            // TODO only the user themselves can set inactive
+            var appUser = await this.AppUserManager.FindByIdAsync(id);
+            if (appUser != null)
+            {
+
+                appUser.IsActive = false;
+                IdentityResult result = await this.AppUserManager.UpdateAsync(appUser);
+                
+                if (!result.Succeeded)
+                {
+                    return GetErrorResult(result);
+                }
+                return Ok();
+            }
+            return NotFound();
+
+        }
+ 
         [Authorize(Roles = "Admin")]
         [Route("user/{id:guid}/roles")]
         [HttpPut]

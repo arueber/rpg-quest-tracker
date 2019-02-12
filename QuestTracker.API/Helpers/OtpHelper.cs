@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Web;
+using Base32;
+using Microsoft.AspNet.Identity;
 using QuestTracker.API.Services;
-using OtpNet;
+using OtpSharp;
 
 namespace QuestTracker.API.Helpers
 {
@@ -21,21 +23,20 @@ namespace QuestTracker.API.Helpers
                 // We need to check the passcode against the past, current, and future passcodes
                 if (!string.IsNullOrWhiteSpace(otp))
                 {
-                    var base32Bytes = Base32Encoding.ToBytes(key);
-                    var timeWindowUsed = Int64.MinValue;
-                    var totp = new Totp(base32Bytes);
+                    long timeStepMatched = 0;
+
+                    var totp = new Totp(Base32Encoder.Decode(key));
 
                     var headeroffset = request.Headers.Date;
                     if (headeroffset.HasValue)
                     {
                         DateTime correctTime = headeroffset.Value.DateTime;
                         var correction = new TimeCorrection(correctTime);
-                        totp = new Totp(base32Bytes, timeCorrection: correction);
+                        totp = new Totp(Base32Encoder.Decode(key), timeCorrection: correction);
                     }
-                    var totpCode = totp.ComputeTotp();
 
-                    bool verified = totp.VerifyTotp(otp, out timeWindowUsed,
-                        VerificationWindow.RfcSpecifiedNetworkDelay);
+                    bool verified = totp.VerifyTotp(otp, out timeStepMatched,
+                       VerificationWindow.RfcSpecifiedNetworkDelay);
 
                     if (verified)
                     {
@@ -48,8 +49,8 @@ namespace QuestTracker.API.Helpers
 
         public static string GenerateSharedPrivateKey()
         {
-            var key = KeyGeneration.GenerateRandomKey(10);
-            var base32String = Base32Encoding.ToString(key);
+            byte[] secretKey = KeyGeneration.GenerateRandomKey(20);
+            var base32String = Base32Encoder.Encode(secretKey);
 
             return base32String;
         }

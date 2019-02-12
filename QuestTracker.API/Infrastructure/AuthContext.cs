@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using Microsoft.AspNet.Identity.EntityFramework;
+using QuestTracker.API.Entities;
 
 namespace QuestTracker.API.Infrastructure
 {
@@ -19,5 +21,8 @@ namespace QuestTracker.API.Infrastructure
         {
             return new AuthContext();
         }
+
+        public DbSet<Client> Clients { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }

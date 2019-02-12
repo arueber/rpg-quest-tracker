@@ -8,6 +8,33 @@ namespace QuestTracker.API.Migrations
         public override void Up()
         {
             CreateTable(
+                "dbo.Clients",
+                c => new
+                    {
+                        Id = c.String(nullable: false, maxLength: 128),
+                        Secret = c.String(nullable: false),
+                        Name = c.String(nullable: false, maxLength: 100),
+                        ApplicationType = c.Int(nullable: false),
+                        Active = c.Boolean(nullable: false),
+                        RefreshTokenLifeTime = c.Int(nullable: false),
+                        AllowedOrigin = c.String(maxLength: 100),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.RefreshTokens",
+                c => new
+                    {
+                        Id = c.String(nullable: false, maxLength: 128),
+                        Subject = c.String(nullable: false, maxLength: 50),
+                        ClientId = c.String(nullable: false, maxLength: 50),
+                        IssuedUtc = c.DateTime(nullable: false),
+                        ExpiresUtc = c.DateTime(nullable: false),
+                        ProtectedTicket = c.String(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
                 "dbo.AspNetRoles",
                 c => new
                     {
@@ -35,10 +62,10 @@ namespace QuestTracker.API.Migrations
                 c => new
                     {
                         Id = c.String(nullable: false, maxLength: 128),
-                        FirstName = c.String(nullable: false, maxLength: 100),
-                        LastName = c.String(nullable: false, maxLength: 100),
+                        FirstName = c.String(maxLength: 100),
+                        LastName = c.String(maxLength: 100),
                         JoinDate = c.DateTime(nullable: false),
-                        PSK = c.String(nullable: false, maxLength: 16),
+                        PSK = c.String(nullable: false),
                         IsActive = c.Boolean(nullable: false),
                         PhotoURL = c.String(maxLength: 255),
                         Email = c.String(maxLength: 256),
@@ -100,6 +127,8 @@ namespace QuestTracker.API.Migrations
             DropTable("dbo.AspNetUsers");
             DropTable("dbo.AspNetUserRoles");
             DropTable("dbo.AspNetRoles");
+            DropTable("dbo.RefreshTokens");
+            DropTable("dbo.Clients");
         }
     }
 }

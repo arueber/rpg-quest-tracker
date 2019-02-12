@@ -12,11 +12,9 @@ namespace QuestTracker.API.Infrastructure
 {
     public class ApplicationUser: IdentityUser
     {
-        [Required]
         [MaxLength(100)]
         public string FirstName { get; set; }
-
-        [Required]
+        
         [MaxLength(100)]
         public string LastName { get; set; }
 
@@ -24,7 +22,6 @@ namespace QuestTracker.API.Infrastructure
         public DateTime JoinDate { get; set; }
 
         [Required]
-        [MaxLength(16)]
         public string PSK { get; set; }
 
         [Required]

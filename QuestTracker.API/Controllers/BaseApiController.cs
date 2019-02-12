@@ -18,6 +18,8 @@ namespace QuestTracker.API.Controllers
         private ApplicationUserManager _appUserManager = null;
         private ApplicationRoleManager _appRoleManager = null;
 
+        private AuthorizationRepository _repo = null;
+
         protected ApplicationUserManager AppUserManager
         {
             get
@@ -31,6 +33,16 @@ namespace QuestTracker.API.Controllers
             get
             {
                 return _appRoleManager ?? Request.GetOwinContext().GetUserManager<ApplicationRoleManager>();
+
+                
+            }
+        }
+
+        protected AuthorizationRepository AuthRepository
+        {
+            get
+            {
+                return _repo ?? Request.GetOwinContext().Get<AuthorizationRepository>();
             }
         }
 

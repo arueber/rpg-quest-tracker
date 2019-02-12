@@ -1,5 +1,8 @@
+using System.Web;
+using Base32;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using OtpSharp;
 using QuestTracker.API.Helpers;
 using QuestTracker.API.Infrastructure;
 
@@ -25,7 +28,7 @@ namespace QuestTracker.API.Migrations
             var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new AuthContext()));
 
             var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(new AuthContext()));
-            
+
             var user = new ApplicationUser()
             {
                 UserName = "a_rueber@mailinator.com",
@@ -35,6 +38,7 @@ namespace QuestTracker.API.Migrations
                 LastName = "Rueber",
                 JoinDate = DateTime.Now,
                 PSK = OtpHelper.GenerateSharedPrivateKey(),
+                TwoFactorEnabled = true,
                 IsActive = true
             };
 

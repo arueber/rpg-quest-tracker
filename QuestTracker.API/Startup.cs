@@ -44,15 +44,17 @@ namespace QuestTracker.API
             app.CreatePerOwinContext(AuthContext.Create);
             app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
             app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);
+            // TODO app.CreatePerOwinContext<AuthorizationRepository>(AuthorizationRepository.Create());
 
             // Plugin the OAuth bearer JSON Web Token tokens generation and Consumption will be here
             OAuthAuthorizationServerOptions OAuthServerOptions = new OAuthAuthorizationServerOptions()
             {
                 // TODO For Dev enviroment only (on production should be AllowInsecureHttp = false)
                 AllowInsecureHttp = true,
-                TokenEndpointPath = new PathString("/oauth/token"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
+                TokenEndpointPath = new PathString("/token"),
+                AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30),
                 Provider = new CustomOAuthProvider(),
+                RefreshTokenProvider = new CustomRefreshTokenProvider(),
                 AccessTokenFormat = new CustomJwtFormat(_URL)
             };
 
