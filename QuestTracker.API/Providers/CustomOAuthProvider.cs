@@ -103,6 +103,7 @@ namespace QuestTracker.API.Providers
             }
 
             ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(userManager, "JWT");
+            oAuthIdentity.AddClaims(ExtendedClaimsProvider.GetClaims(user));
             oAuthIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
             oAuthIdentity.AddClaim(new Claim("sub", context.UserName));
             oAuthIdentity.AddClaim(new Claim(ClaimTypes.Role, "User"));
