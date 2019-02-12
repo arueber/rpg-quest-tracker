@@ -4,18 +4,27 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using QuestTracker.API.Filters;
 
 namespace QuestTracker.API.Controllers
 {
+    [Authorize]
     [RoutePrefix("api/Orders")]
-    public class OrdersController : ApiController
+    public class OrdersController : BaseApiController
     {
-        [Authorize]
-        [Route("")]
-        public IHttpActionResult Get()
+        [Route("history")]
+        public IHttpActionResult GetHistory()
         {
             return Ok(Order.CreateOrders());
         }
+
+        [TwoFactorAuthorize]
+        [Route("transfer")]
+        public IHttpActionResult ShipOrder(ShipOrderModel orderToShip)
+        {
+            return Ok();
+        }
+
 
     }
 
@@ -41,6 +50,12 @@ namespace QuestTracker.API.Controllers
 
             return OrderList;
         }
+    }
+
+    public class ShipOrderModel
+    {
+        public int OrderId { get; set; }
+        public string CustomerName { get; set; }
     }
 
     #endregion
