@@ -20,6 +20,8 @@ namespace QuestTracker.API.Controllers
 
         private AuthorizationRepository _repo = null;
 
+        protected const string _appName = "Quest Tracker";
+
         protected ApplicationUserManager AppUserManager
         {
             get

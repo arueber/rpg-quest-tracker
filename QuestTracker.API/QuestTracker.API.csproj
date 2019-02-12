@@ -212,6 +212,7 @@
     <Compile Include="Infrastructure\ApplicationUser.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\Enum.cs" />
+    <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\ModelFactory.cs" />
     <Compile Include="Models\RoleBindingModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

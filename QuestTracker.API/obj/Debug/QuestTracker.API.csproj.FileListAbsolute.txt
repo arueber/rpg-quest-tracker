@@ -65,3 +65,4 @@ D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.Migration
 D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.csproj.GenerateResource.Cache
 D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.dll
 D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.pdb
+D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.csprojResolveAssemblyReference.cache

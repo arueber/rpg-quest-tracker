@@ -22,6 +22,8 @@ namespace QuestTracker.API
     {
         private string _URL = "http://localhost:57085";
 
+        public static OAuthBearerAuthenticationOptions OAuthBearerOptions { get; private set; }
+
         public void Configuration(IAppBuilder app)
         {
             HttpConfiguration httpConfig = new HttpConfiguration();
@@ -56,6 +58,12 @@ namespace QuestTracker.API
                 RefreshTokenProvider = new CustomRefreshTokenProvider(),
                 AccessTokenFormat = new CustomJwtFormat(_URL)
             };
+
+            OAuthBearerOptions = new OAuthBearerAuthenticationOptions()
+            {
+                AccessTokenFormat = new CustomJwtFormat(_URL)
+            };
+            
 
             // Token Generation
             app.UseOAuthAuthorizationServer(OAuthServerOptions);

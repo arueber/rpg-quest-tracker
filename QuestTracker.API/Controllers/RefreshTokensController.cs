@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using QuestTracker.API.Filters;
 
 namespace QuestTracker.API.Controllers
 {
@@ -12,6 +13,7 @@ namespace QuestTracker.API.Controllers
     public class RefreshTokensController : BaseApiController
     {
         [Authorize(Users = "Admin")]
+        [TwoFactorAuthorize]
         [Route("")]
         public IHttpActionResult Get()
         {
@@ -19,7 +21,7 @@ namespace QuestTracker.API.Controllers
         }
 
         [Authorize(Users = "Admin")]
-        [AllowAnonymous]
+        [TwoFactorAuthorize]
         [Route("")]
         public async Task<IHttpActionResult> Delete(string tokenId)
         {

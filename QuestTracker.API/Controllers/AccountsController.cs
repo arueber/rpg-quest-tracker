@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Web.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.OAuth;
+using Newtonsoft.Json.Linq;
 using QuestTracker.API.Filters;
 using QuestTracker.API.Infrastructure;
 using QuestTracker.API.Models;
@@ -84,14 +88,14 @@ namespace QuestTracker.API.Controllers
             string code = await this.AppUserManager.GenerateEmailConfirmationTokenAsync(user.Id);
             var callbackUrl = new Uri(Url.Link("ConfirmEmailRoute", new {userId = user.Id, code = code }));
             await this.AppUserManager.SendEmailAsync(user.Id, "Confirm your account",
-                "Please confirm your account by click <a href=\"" + callbackUrl + "\">here</a>");
+                "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
             return Ok();
         }
 
         // POST api/Accounts/CreateUser
         [Authorize(Roles = "Admin")]
-        [Route("register")]
+        [Route("createuser")]
         public async Task<IHttpActionResult> CreateUser(CreateUserBindingModel createUserModel)
         {
             if (!ModelState.IsValid)
@@ -120,7 +124,7 @@ namespace QuestTracker.API.Controllers
             string code = await this.AppUserManager.GenerateEmailConfirmationTokenAsync(user.Id);
             var callbackUrl = new Uri(Url.Link("ConfirmEmailRoute", new { userId = user.Id, code = code }));
             await this.AppUserManager.SendEmailAsync(user.Id, "Confirm your account",
-                "You have been registered for the Quest Tracker App. Please confirm your account by click <a href=\"" + callbackUrl + "\">here</a>");
+                "You have been registered for the Quest Tracker App. Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
             Uri locationHeader = new Uri(Url.Link("GetUserById", new { id = user.Id }));
 
@@ -156,6 +160,112 @@ namespace QuestTracker.API.Controllers
                 {
                     return GetErrorResult(result);
                 }
+        }
+
+        // POST api/Accounts/Login
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("login")]
+        public async Task<IHttpActionResult> Login(LoginModel loginModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            ApplicationUser user = await this.AppUserManager.FindByEmailAsync(loginModel.Email);
+
+            if (user == null)
+            {
+                // TODO email user that account does not exist
+                //string code = await this.AppUserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                //var callbackUrl = new Uri(Url.Link("ConfirmEmailRoute", new { userId = user.Id, code = code }));
+                //await this.AppUserManager.SendEmailAsync(user.Id, "Confirm your account",
+                //    "Someone attempted to register to " + _appName + " with your email. If it was you, please confirm your account " +
+                //    "by click <a href=\"" + callbackUrl + "\">here</a>. If it was not you, you can do nothing and the account will not be activated.");
+            }
+            else
+            {
+                string token = await this.AppUserManager.GenerateUserTokenAsync("passwordless-auth", user.Id);
+                var url = new Uri(Url.Link("LoginCallback", new { token = token, email = loginModel.Email }));
+                await this.AppUserManager.SendEmailAsync(user.Id, "Login to your account",
+                    "Someone attempted to login to " + _appName +
+                    " with your email. If it was you, please login to your account " +
+                    "by clicking <a href=\"" + url + "\">here</a>.");
+
+            }
+            
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("LoginCallback", Name = "LoginCallback")]
+        public async Task<IHttpActionResult> LoginCallback(string token, string email)
+        {
+            if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(email))
+            {
+                ModelState.AddModelError("", "Email and token are required");
+                return BadRequest(ModelState);
+            }
+
+            var user = await this.AppUserManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var isValid = await this.AppUserManager.VerifyUserTokenAsync(user.Id, "passwordless-auth", token);
+
+            if (!isValid)
+            {
+                return BadRequest("Invalid token.");
+            }
+
+            IdentityResult result = await this.AppUserManager.UpdateSecurityStampAsync(user.Id);
+
+            if (result.Succeeded)
+            {
+                var accessTokenResponse = GenerateLocalAccessTokenResponse(user, "AngularApp"); // TODO how to get the client id here?
+
+                return Ok(accessTokenResponse);
+            }
+            else
+            {
+                return GetErrorResult(result);
+            }
+        }
+
+        private JObject GenerateLocalAccessTokenResponse(ApplicationUser user, string clientId)
+        {
+            var tokenExpiration = TimeSpan.FromMinutes(30);
+
+            ClaimsIdentity identity = new ClaimsIdentity(OAuthDefaults.AuthenticationType);
+            identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
+            identity.AddClaim(new Claim("sub", user.UserName));
+            identity.AddClaim(new Claim(ClaimTypes.Role, "User"));
+            identity.AddClaim(new Claim("PSK", user.PSK));
+
+            var props = new AuthenticationProperties()
+            {
+                IssuedUtc = DateTime.UtcNow,
+                ExpiresUtc = DateTime.UtcNow.Add(tokenExpiration),
+            };
+
+            var ticket = new AuthenticationTicket(identity, props);
+
+            var accessToken = Startup.OAuthBearerOptions.AccessTokenFormat.Protect(ticket);
+
+            JObject tokenResponse = new JObject(
+                new JProperty("userName", user.UserName),
+                new JProperty("access_token", accessToken),
+                new JProperty("token_type", "bearer"),
+                new JProperty("as:client_id", clientId),
+                new JProperty("expires_in", tokenExpiration.TotalSeconds.ToString()),
+                new JProperty(".issued", ticket.Properties.IssuedUtc.ToString()),
+                new JProperty(".expires", ticket.Properties.ExpiresUtc.ToString())
+            );
+
+            return tokenResponse;
         }
 
         [Authorize(Roles = "Admin")]
