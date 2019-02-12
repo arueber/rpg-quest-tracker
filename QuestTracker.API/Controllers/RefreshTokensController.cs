@@ -18,7 +18,7 @@ namespace QuestTracker.API.Controllers
             return Ok(this.AuthRepository.GetAllRefreshTokens());
         }
 
-        //[Authorize(Users = "Admin")]
+        [Authorize(Users = "Admin")]
         [AllowAnonymous]
         [Route("")]
         public async Task<IHttpActionResult> Delete(string tokenId)

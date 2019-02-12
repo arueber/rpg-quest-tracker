@@ -40,10 +40,7 @@ namespace QuestTracker.API.Controllers
 
         protected AuthorizationRepository AuthRepository
         {
-            get
-            {
-                return _repo ?? Request.GetOwinContext().Get<AuthorizationRepository>();
-            }
+            get { return _repo ?? new AuthorizationRepository(); }
         }
 
         public BaseApiController()

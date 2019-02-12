@@ -9,26 +9,14 @@ using QuestTracker.API.Entities;
 
 namespace QuestTracker.API.Infrastructure
 {
-    public class AuthorizationRepository
+    public class AuthorizationRepository:IDisposable
     {
         private AuthContext _ctx;
 
-        public static AuthorizationRepository Create(IOwinContext context)
-        {
-            var authRepo = new AuthorizationRepository(context.Get<AuthContext>());
-
-            return authRepo;
-        }
-
         public AuthorizationRepository()
-        {
+        { 
+            _ctx = new AuthContext();
         }
-
-        public AuthorizationRepository(AuthContext authContext)
-        {
-            _ctx = authContext;
-        }
-
 
         public Client FindClient(string clientId)
         {

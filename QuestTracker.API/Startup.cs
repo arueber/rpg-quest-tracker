@@ -44,7 +44,6 @@ namespace QuestTracker.API
             app.CreatePerOwinContext(AuthContext.Create);
             app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
             app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);
-            // TODO app.CreatePerOwinContext<AuthorizationRepository>(AuthorizationRepository.Create());
 
             // Plugin the OAuth bearer JSON Web Token tokens generation and Consumption will be here
             OAuthAuthorizationServerOptions OAuthServerOptions = new OAuthAuthorizationServerOptions()
