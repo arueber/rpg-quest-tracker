@@ -10,10 +10,12 @@ using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Linq;
+using QuestTracker.API.Entities;
 using QuestTracker.API.Filters;
 using QuestTracker.API.Infrastructure;
 using QuestTracker.API.Models;
 using QuestTracker.API.Helpers;
+using QuestTracker.API.Providers;
 
 namespace QuestTracker.API.Controllers
 {
@@ -187,7 +189,7 @@ namespace QuestTracker.API.Controllers
             else
             {
                 string token = await this.AppUserManager.GenerateUserTokenAsync("passwordless-auth", user.Id);
-                var url = new Uri(Url.Link("LoginCallback", new { token = token, email = loginModel.Email }));
+                var url = new Uri(Url.Link("LoginCallback", new { token = token, email = loginModel.Email, clientId = loginModel.ClientId }));
                 await this.AppUserManager.SendEmailAsync(user.Id, "Login to your account",
                     "Someone attempted to login to " + _appName +
                     " with your email. If it was you, please login to your account " +
@@ -200,7 +202,7 @@ namespace QuestTracker.API.Controllers
 
         [HttpGet]
         [Route("LoginCallback", Name = "LoginCallback")]
-        public async Task<IHttpActionResult> LoginCallback(string token, string email)
+        public async Task<IHttpActionResult> LoginCallback(string token, string email, string clientId)
         {
             if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(email))
             {
@@ -225,7 +227,69 @@ namespace QuestTracker.API.Controllers
 
             if (result.Succeeded)
             {
-                var accessTokenResponse = GenerateLocalAccessTokenResponse(user, "AngularApp"); // TODO how to get the client id here?
+                var tokenExpiration = TimeSpan.FromMinutes(30);
+
+                ClaimsIdentity identity = new ClaimsIdentity(OAuthDefaults.AuthenticationType);
+                identity.AddClaims(ExtendedClaimsProvider.GetClaims(user));
+                identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
+                identity.AddClaim(new Claim("sub", user.UserName));
+                identity.AddClaim(new Claim(ClaimTypes.Role, "User"));
+                identity.AddClaim(new Claim("PSK", user.PSK));
+
+                var props = new AuthenticationProperties(new Dictionary<string, string>
+                {
+                    {
+                        "as:client_id", clientId
+                    },
+                    {
+                        "userName", user.UserName
+                    },
+                    {
+                        ".issued", DateTime.UtcNow.ToString()
+                    },
+                    {
+                        ".expires", DateTime.UtcNow.Add(tokenExpiration).ToString()
+                    }
+                });
+                props.IssuedUtc = DateTime.UtcNow;
+                props.ExpiresUtc = DateTime.UtcNow.Add(tokenExpiration);
+
+                var ticket = new AuthenticationTicket(identity, props);
+
+                var accessToken = Startup.OAuthServerOptions.AccessTokenFormat.Protect(ticket);
+
+                // testing refresh token generation
+                Microsoft.Owin.Security.Infrastructure.AuthenticationTokenCreateContext context =
+                    new Microsoft.Owin.Security.Infrastructure.AuthenticationTokenCreateContext(
+                        Request.GetOwinContext(),
+                        Startup.OAuthServerOptions.AccessTokenFormat, ticket);
+
+                JObject accessTokenResponse = new JObject(
+                    new JProperty("access_token", accessToken),
+                    new JProperty("userName", user.UserName),
+                    new JProperty("token_type", "bearer"),
+                    new JProperty("as:client_id", clientId),
+                    new JProperty("expires_in", tokenExpiration.TotalSeconds.ToString()),
+                    new JProperty(".issued", ticket.Properties.IssuedUtc.ToString()),
+                    new JProperty(".expires", ticket.Properties.ExpiresUtc.ToString())
+                );
+
+                Client client = null;
+                using (AuthorizationRepository _repo = new AuthorizationRepository())
+                {
+                    client = _repo.FindClient(clientId);
+                }
+
+                if (client != null)
+                {
+                    context.OwinContext.Set<string>("as:clientRefreshTokenLifeTime",
+                        client.RefreshTokenLifeTime.ToString());
+                    await Startup.OAuthServerOptions.RefreshTokenProvider.CreateAsync(context);
+                    props.Dictionary.Add("refresh_token", context.Token);
+
+                    accessTokenResponse.Add(new JProperty("refresh_token", context.Token));
+
+                }
 
                 return Ok(accessTokenResponse);
             }
@@ -233,40 +297,6 @@ namespace QuestTracker.API.Controllers
             {
                 return GetErrorResult(result);
             }
-        }
-
-        private JObject GenerateLocalAccessTokenResponse(ApplicationUser user, string clientId)
-        {
-            var tokenExpiration = TimeSpan.FromMinutes(30);
-
-            ClaimsIdentity identity = new ClaimsIdentity(OAuthDefaults.AuthenticationType);
-            identity.AddClaims(ExtendedClaimsProvider.GetClaims(user));
-            identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
-            identity.AddClaim(new Claim("sub", user.UserName));
-            identity.AddClaim(new Claim(ClaimTypes.Role, "User"));
-            identity.AddClaim(new Claim("PSK", user.PSK));
-
-            var props = new AuthenticationProperties()
-            {
-                IssuedUtc = DateTime.UtcNow,
-                ExpiresUtc = DateTime.UtcNow.Add(tokenExpiration),
-            };
-
-            var ticket = new AuthenticationTicket(identity, props);
-
-            var accessToken = Startup.OAuthBearerOptions.AccessTokenFormat.Protect(ticket);
-
-            JObject tokenResponse = new JObject(
-                new JProperty("userName", user.UserName),
-                new JProperty("access_token", accessToken),
-                new JProperty("token_type", "bearer"),
-                new JProperty("as:client_id", clientId),
-                new JProperty("expires_in", tokenExpiration.TotalSeconds.ToString()),
-                new JProperty(".issued", ticket.Properties.IssuedUtc.ToString()),
-                new JProperty(".expires", ticket.Properties.ExpiresUtc.ToString())
-            );
-
-            return tokenResponse;
         }
 
         [Authorize(Roles = "Admin")]

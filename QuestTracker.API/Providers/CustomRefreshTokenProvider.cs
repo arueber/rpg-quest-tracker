@@ -44,7 +44,12 @@ namespace QuestTracker.API.Providers
                 context.Ticket.Properties.IssuedUtc = token.IssuedUtc;
                 context.Ticket.Properties.ExpiresUtc = token.ExpiresUtc;
 
-                token.ProtectedTicket = context.SerializeTicket();
+                //token.ProtectedTicket = context.SerializeTicket();
+                Microsoft.Owin.Security.DataHandler.Serializer.TicketSerializer serializer
+                    = new Microsoft.Owin.Security.DataHandler.Serializer.TicketSerializer();
+
+                token.ProtectedTicket = System.Text.Encoding.Default.GetString(serializer.Serialize(context.Ticket));
+                
 
                 var result = await _repo.AddRefreshToken(token);
 
@@ -75,7 +80,10 @@ namespace QuestTracker.API.Providers
                 if (refreshToken != null)
                 {
                     // Get protectedTicket from refreshToken class
-                    context.DeserializeTicket(refreshToken.ProtectedTicket);
+                    //context.DeserializeTicket(refreshToken.ProtectedTicket);
+                    Microsoft.Owin.Security.DataHandler.Serializer.TicketSerializer serializer = new Microsoft.Owin.Security.DataHandler.Serializer.TicketSerializer();
+                    context.SetTicket(serializer.Deserialize(System.Text.Encoding.Default.GetBytes(refreshToken.ProtectedTicket)));
+
                     var result = await _repo.RemoveRefreshToken(hashedTokenId);
                 }
             }

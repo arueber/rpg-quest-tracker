@@ -13,5 +13,8 @@ namespace QuestTracker.API.Models
         [Display(Name = "Email")]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
+
+        [Required]
+        public string ClientId { get; set; }
     }
 }

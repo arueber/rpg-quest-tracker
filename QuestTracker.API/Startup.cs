@@ -21,8 +21,8 @@ namespace QuestTracker.API
     public class Startup
     {
         private string _URL = "http://localhost:57085";
-
-        public static OAuthBearerAuthenticationOptions OAuthBearerOptions { get; private set; }
+        
+        public static OAuthAuthorizationServerOptions OAuthServerOptions { get; private set; }
 
         public void Configuration(IAppBuilder app)
         {
@@ -48,7 +48,7 @@ namespace QuestTracker.API
             app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);
 
             // Plugin the OAuth bearer JSON Web Token tokens generation and Consumption will be here
-            OAuthAuthorizationServerOptions OAuthServerOptions = new OAuthAuthorizationServerOptions()
+            OAuthServerOptions = new OAuthAuthorizationServerOptions()
             {
                 // TODO For Dev enviroment only (on production should be AllowInsecureHttp = false)
                 AllowInsecureHttp = true,
@@ -56,11 +56,6 @@ namespace QuestTracker.API
                 AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30),
                 Provider = new CustomOAuthProvider(),
                 RefreshTokenProvider = new CustomRefreshTokenProvider(),
-                AccessTokenFormat = new CustomJwtFormat(_URL)
-            };
-
-            OAuthBearerOptions = new OAuthBearerAuthenticationOptions()
-            {
                 AccessTokenFormat = new CustomJwtFormat(_URL)
             };
             
