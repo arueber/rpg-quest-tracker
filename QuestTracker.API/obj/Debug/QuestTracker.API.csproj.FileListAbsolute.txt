@@ -61,8 +61,9 @@ D:\Dev\rpg-request-tracker\QuestTracker.API\bin\System.Net.Http.Formatting.xml
 D:\Dev\rpg-request-tracker\QuestTracker.API\bin\System.Web.Http.xml
 D:\Dev\rpg-request-tracker\QuestTracker.API\bin\System.Web.Http.Owin.xml
 D:\Dev\rpg-request-tracker\QuestTracker.API\bin\System.Web.Http.WebHost.xml
+D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.csprojResolveAssemblyReference.cache
 D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.Migrations.InitialCreate.resources
 D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.csproj.GenerateResource.Cache
 D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.dll
 D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.pdb
-D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.csprojResolveAssemblyReference.cache
+D:\Dev\rpg-request-tracker\QuestTracker.API\obj\Debug\QuestTracker.API.Migrations.ItemsAndNodes.resources

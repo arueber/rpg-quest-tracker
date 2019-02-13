@@ -46,11 +46,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -191,10 +191,19 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ClaimsController.cs" />
+    <Compile Include="Controllers\FoldersController.cs" />
+    <Compile Include="Controllers\ItemsController.cs" />
     <Compile Include="Controllers\RefreshTokensController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Entities\Client.cs" />
+    <Compile Include="Entities\Folder.cs" />
+    <Compile Include="Entities\Reminder.cs" />
+    <Compile Include="Entities\Project.cs" />
+    <Compile Include="Entities\ProjectUser.cs" />
     <Compile Include="Entities\RefreshToken.cs" />
+    <Compile Include="Entities\Item.cs" />
+    <Compile Include="Entities\SubItem.cs" />
+    <Compile Include="Entities\TreeNode.cs" />
     <Compile Include="Filters\TwoFactorAuthorizeAttribute.cs" />
     <Compile Include="Helpers\CryptoHelper.cs" />
     <Compile Include="Helpers\OtpHelper.cs" />
@@ -206,9 +215,14 @@
     <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Infrastructure\AuthorizationRepository.cs" />
     <Compile Include="Infrastructure\ExtendedClaimsProvider.cs" />
+    <Compile Include="Infrastructure\ItemRepository.cs" />
     <Compile Include="Migrations\201902121810239_InitialCreate.cs" />
     <Compile Include="Migrations\201902121810239_InitialCreate.Designer.cs">
       <DependentUpon>201902121810239_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902131948177_ItemsAndNodes.cs" />
+    <Compile Include="Migrations\201902131948177_ItemsAndNodes.Designer.cs">
+      <DependentUpon>201902131948177_ItemsAndNodes.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Infrastructure\ApplicationUser.cs" />
@@ -240,6 +254,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201902121810239_InitialCreate.resx">
       <DependentUpon>201902121810239_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902131948177_ItemsAndNodes.resx">
+      <DependentUpon>201902131948177_ItemsAndNodes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

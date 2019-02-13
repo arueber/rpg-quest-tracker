@@ -10,4 +10,11 @@ namespace QuestTracker.API.Models
         JavaScript = 0,
         NativeConfidential = 1
     }
+
+    public enum SmartListChoices
+    {
+        Auto = 0,
+        Visible = 1,
+        Hidden = 2
+    }
 }

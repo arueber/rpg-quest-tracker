@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using QuestTracker.API.Entities;
 
 namespace QuestTracker.API.Infrastructure
 {
@@ -29,6 +30,16 @@ namespace QuestTracker.API.Infrastructure
 
         [MaxLength(255)]
         public string PhotoURL { get; set; }
+
+        public virtual ICollection<Folder> Folders { get; set; }
+
+        public virtual ICollection<ProjectUser> ProjectUsers { get; set; }
+
+        public virtual ICollection<Item> AssignedItems { get; set; }
+
+        public virtual ICollection<Item> CompletedItems { get; set; }
+
+        public virtual ICollection<Reminder> Reminders { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager,
             string authenticationType)
