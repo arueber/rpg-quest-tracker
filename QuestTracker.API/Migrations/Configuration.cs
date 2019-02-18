@@ -25,9 +25,10 @@ namespace QuestTracker.API.Migrations
         {
             //  This method will be called after migrating to the latest version.
 
-            var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new AuthContext()));
+            var manager = new UserManager<ApplicationUser, int>(new UserStore<ApplicationUser, CustomRole, int, CustomUserLogin, CustomUserRole,
+                CustomUserClaim> (new AuthContext()));
 
-            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(new AuthContext()));
+            var roleManager = new ApplicationRoleManager(new CustomRoleStore(new AuthContext()));
 
             var user = new ApplicationUser()
             {
@@ -37,6 +38,7 @@ namespace QuestTracker.API.Migrations
                 FirstName = "A",
                 LastName = "Rueber",
                 JoinDate = DateTime.Now,
+                Revision = 1,
                 PSK = OtpHelper.GenerateSharedPrivateKey(),
                 TwoFactorEnabled = true,
                 IsActive = true
@@ -46,10 +48,10 @@ namespace QuestTracker.API.Migrations
 
             if (roleManager.Roles.Count() == 0)
             {
-                roleManager.Create(new IdentityRole {Name = "SuperAdmin"});
-                roleManager.Create(new IdentityRole {Name = "Admin"});
-                roleManager.Create(new IdentityRole {Name = "Owner"});
-                roleManager.Create(new IdentityRole {Name = "User"});
+                roleManager.Create(new CustomRole {Name = "SuperAdmin"});
+                roleManager.Create(new CustomRole { Name = "Admin"});
+                roleManager.Create(new CustomRole { Name = "Owner"});
+                roleManager.Create(new CustomRole { Name = "User"});
             }
 
             var adminUser = manager.FindByName("a_rueber@mailinator.com");

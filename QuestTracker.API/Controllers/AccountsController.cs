@@ -31,7 +31,7 @@ namespace QuestTracker.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [Route("user/{id:guid}", Name = "GetUserById")]
-        public async Task<IHttpActionResult> GetUser(string Id)
+        public async Task<IHttpActionResult> GetUser(int Id)
         {
             var user = await this.AppUserManager.FindByIdAsync(Id);
 
@@ -136,9 +136,9 @@ namespace QuestTracker.API.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("ConfirmEmail", Name = "ConfirmEmailRoute")]
-        public async Task<IHttpActionResult> ConfirmEmail(string userId = "", string code = "")
+        public async Task<IHttpActionResult> ConfirmEmail(int userId, string code = "")
         {
-            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(code))
+            if (userId == default(int) || string.IsNullOrWhiteSpace(code))
             {
                 ModelState.AddModelError("", "User Id and Code are required");
                 return BadRequest(ModelState);
@@ -301,7 +301,7 @@ namespace QuestTracker.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [Route("user/{id:guid}")]
-        public async Task<IHttpActionResult> DeleteUser(string id)
+        public async Task<IHttpActionResult> DeleteUser(int id)
         {
             // Only SuperAdmin or Admin can delete users 
 
@@ -327,7 +327,7 @@ namespace QuestTracker.API.Controllers
         /// <returns></returns>
         [TwoFactorAuthorize]
         [Route("user/{id:guid}/setinactive")]
-        public async Task<IHttpActionResult> SetUserInactive(string id)
+        public async Task<IHttpActionResult> SetUserInactive(int id)
         {
             // TODO only the user themselves can set inactive
             var appUser = await this.AppUserManager.FindByIdAsync(id);
@@ -350,7 +350,7 @@ namespace QuestTracker.API.Controllers
         [Authorize(Roles = "Admin")]
         [Route("user/{id:guid}/roles")]
         [HttpPut]
-        public async Task<IHttpActionResult> AssignRolesToUser([FromUri] string id, [FromBody] string[] rolesToAssign)
+        public async Task<IHttpActionResult> AssignRolesToUser([FromUri] int id, [FromBody] string[] rolesToAssign)
         {
             var appUser = await this.AppUserManager.FindByIdAsync(id);
 
@@ -392,7 +392,7 @@ namespace QuestTracker.API.Controllers
         [Authorize(Roles = "Admin")]
         [Route("user/{id:guid}/assignclaims")]
         [HttpPut]
-        public async Task<IHttpActionResult> AssignClaimsToUser([FromUri] string id, [FromBody] List<ClaimBindingModel> claimsToAssign)
+        public async Task<IHttpActionResult> AssignClaimsToUser([FromUri] int id, [FromBody] List<ClaimBindingModel> claimsToAssign)
         {
 
             if (!ModelState.IsValid)
@@ -424,7 +424,7 @@ namespace QuestTracker.API.Controllers
         [Authorize(Roles = "Admin")]
         [Route("user/{id:guid}/removeclaims")]
         [HttpPut]
-        public async Task<IHttpActionResult> RemoveClaimsFromUser([FromUri] string id, [FromBody] List<ClaimBindingModel> claimsToRemove)
+        public async Task<IHttpActionResult> RemoveClaimsFromUser([FromUri] int id, [FromBody] List<ClaimBindingModel> claimsToRemove)
         {
 
             if (!ModelState.IsValid)

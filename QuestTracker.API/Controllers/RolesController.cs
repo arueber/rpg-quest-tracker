@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using QuestTracker.API.Infrastructure;
 using QuestTracker.API.Models;
 
 namespace QuestTracker.API.Controllers
@@ -16,7 +17,7 @@ namespace QuestTracker.API.Controllers
     public class RolesController : BaseApiController
     {
         [Route("{id:guid}", Name = "GetRoleById")]
-        public async Task<IHttpActionResult> GetRole(string Id)
+        public async Task<IHttpActionResult> GetRole(int Id)
         {
             var role = await this.AppRoleManager.FindByIdAsync(Id);
 
@@ -43,7 +44,7 @@ namespace QuestTracker.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var role = new IdentityRole {Name = model.Name};
+            var role = new CustomRole{Name = model.Name};
             var result = await this.AppRoleManager.CreateAsync(role);
 
             if (!result.Succeeded)
@@ -56,7 +57,7 @@ namespace QuestTracker.API.Controllers
         }
 
         [Route("{id:guid}")]
-        public async Task<IHttpActionResult> DeleteRole(string Id)
+        public async Task<IHttpActionResult> DeleteRole(int Id)
         {
             var role = await this.AppRoleManager.FindByIdAsync(Id);
 
@@ -84,7 +85,7 @@ namespace QuestTracker.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            foreach (string user in model.EnrolledUsers)
+            foreach (int user in model.EnrolledUsers)
             {
                 var appUser = await this.AppUserManager.FindByIdAsync(user);
                 if (appUser == null)
@@ -104,7 +105,7 @@ namespace QuestTracker.API.Controllers
                 }
             }
 
-            foreach (string user in model.RemovedUsers)
+            foreach (int user in model.RemovedUsers)
             {
                 var appUser = await this.AppUserManager.FindByIdAsync(user);
 

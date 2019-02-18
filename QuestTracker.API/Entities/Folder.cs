@@ -11,10 +11,10 @@ namespace QuestTracker.API.Entities
     public class Folder
     {
         [Key]
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         [Required]
-        public string ApplicationUserId { get; set; }
+        public int CreatedByUserId { get; set; }
 
         [Required]
         [MaxLength(100)]
@@ -26,7 +26,16 @@ namespace QuestTracker.API.Entities
         [Required]
         public int Weight { get; set; }
 
-        public virtual ApplicationUser ApplicationUser { get; set; }
+        [Required]
+        public DateTime CreatedAt { get; set; }
+
+        [Required]
+        public DateTime UpdatedAt { get; set; }
+
+        [Required]
+        public int Revision { get; set; }
+
+        public virtual ApplicationUser CreatedByUser { get; set; }
 
         public virtual ICollection<ProjectUser> ProjectUsers { get; set; }
     }

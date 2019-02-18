@@ -9,17 +9,26 @@ namespace QuestTracker.API.Entities
     public class TreeNode
     {
         [Key]
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         [Required]
         [MaxLength(100)]
         public string Name { get; set; }
+
+        [Required]
+        public DateTime CreatedAt { get; set; }
+
+        [Required]
+        public DateTime UpdatedAt { get; set; }
+
+        [Required]
+        public int Revision { get; set; }
        
-        public string ParentNodeId { get; set; }
+        public int? ParentNodeId { get; set; }
         public virtual TreeNode ParentNode { get; set; }
 
         [Required]
-        public string ItemId { get; set; }
+        public int ItemId { get; set; }
         public virtual Item Item { get; set; }
 
         public virtual ICollection<TreeNode> ChildrenNodes { get; set; }

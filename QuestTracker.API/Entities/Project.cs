@@ -9,7 +9,7 @@ namespace QuestTracker.API.Entities
     public class Project
     {
         [Key]
-        public string Id { get; set; }
+        public int Id { get; set; }
         
         [Required]
         [MaxLength(100)]
@@ -17,6 +17,12 @@ namespace QuestTracker.API.Entities
 
         [Required]
         public bool IsActive { get; set; }
+
+        [Required]
+        public DateTime CreatedAt { get; set; }
+
+        [Required]
+        public int Revision { get; set; }
 
         public virtual ICollection<ProjectUser> ProjectUsers { get; set; }
 

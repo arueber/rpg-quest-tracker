@@ -9,9 +9,9 @@ using Microsoft.Owin;
 
 namespace QuestTracker.API.Infrastructure
 {
-    public class ApplicationRoleManager : RoleManager<IdentityRole>
+    public class ApplicationRoleManager : RoleManager<CustomRole, int>
     {
-        public ApplicationRoleManager(IRoleStore<IdentityRole, string> roleStore)
+        public ApplicationRoleManager(IRoleStore<CustomRole, int> roleStore)
             : base(roleStore)
         {
         }
@@ -19,7 +19,7 @@ namespace QuestTracker.API.Infrastructure
         public static ApplicationRoleManager Create(IdentityFactoryOptions<ApplicationRoleManager> options,
             IOwinContext context)
         {
-            var appRoleManager = new ApplicationRoleManager(new RoleStore<IdentityRole>(context.Get<AuthContext>()));
+            var appRoleManager = new ApplicationRoleManager(new CustomRoleStore(context.Get<AuthContext>()));
 
             return appRoleManager;
         }

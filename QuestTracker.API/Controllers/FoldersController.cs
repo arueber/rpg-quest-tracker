@@ -18,9 +18,11 @@ namespace QuestTracker.API.Controllers
         [Route("all", Name = "GetAllFolders")]
         public IHttpActionResult GetAllFolders()
         {
-            var roles = this.AppRoleManager.;
+            //var roles = this.AppRoleManager.;
 
-            return Ok(roles);
+            //return Ok(roles);
+
+            return Ok();
         }
 
         [Route("", Name = "GetUserFolders")]

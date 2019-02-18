@@ -19,7 +19,7 @@ namespace QuestTracker.API.Entities
         [MaxLength(100)]
         public string Name { get; set; }
 
-        public ApplicationTypes ApplicationType { get; set; }
+        public ApplicationType ApplicationType { get; set; }
 
         public bool Active { get; set; }
 

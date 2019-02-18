@@ -8,7 +8,7 @@ using QuestTracker.API.Entities;
 
 namespace QuestTracker.API.Infrastructure
 {
-    public class AuthContext : IdentityDbContext<ApplicationUser>
+    public class AuthContext : IdentityDbContext<ApplicationUser, CustomRole, int, CustomUserLogin, CustomUserRole, CustomUserClaim>
     {
         public AuthContext()
             : base("AuthContext")
@@ -39,7 +39,7 @@ namespace QuestTracker.API.Infrastructure
                 .HasKey(pu => new {pu.ApplicationUserId, pu.ProjectId});
 
             modelBuilder.Entity<ProjectUser>()
-                .HasRequired(pu => pu.ApplicationUser)
+                .HasRequired(pu => pu.User)
                 .WithMany(u => u.ProjectUsers)
                 .HasForeignKey(pu => pu.ApplicationUserId);
 
@@ -56,9 +56,9 @@ namespace QuestTracker.API.Infrastructure
 
             // Item
             modelBuilder.Entity<Item>()
-                .HasOptional(n => n.CompletionApplicationUser)
+                .HasOptional(n => n.CompletedByUser)
                 .WithMany(a => a.CompletedItems)
-                .HasForeignKey(n => n.CompletionApplicationUserId)
+                .HasForeignKey(n => n.CompletedByUserId)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Item>()

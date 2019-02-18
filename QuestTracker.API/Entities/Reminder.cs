@@ -10,17 +10,27 @@ namespace QuestTracker.API.Entities
     public class Reminder
     {
         [Key]
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         [Required]
         public DateTime Date { get; set; }
 
         [Required]
-        public string ApplicationUserId { get; set; }
+        public int Revision { get; set; }
+
+        [Required]
+        public DateTime CreatedAt { get; set; }
+        public string CreatedByDeviceUDID { get; set; }
+
+        [Required]
+        public DateTime UpdatedAt { get; set; }
+
+        [Required]
+        public int ApplicationUserId { get; set; }
         public virtual ApplicationUser ApplicationUser { get; set; }
 
         [Required]
-        public string ItemId { get; set; }
+        public int ItemId { get; set; }
         public virtual Item Item { get; set; }
     }
 }

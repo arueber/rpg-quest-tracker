@@ -11,7 +11,7 @@ using QuestTracker.API.Entities;
 
 namespace QuestTracker.API.Infrastructure
 {
-    public class ApplicationUser: IdentityUser
+    public class ApplicationUser: IdentityUser<int, CustomUserLogin, CustomUserRole, CustomUserClaim>
     {
         [MaxLength(100)]
         public string FirstName { get; set; }
@@ -21,6 +21,9 @@ namespace QuestTracker.API.Infrastructure
 
         [Required]
         public DateTime JoinDate { get; set; }
+
+        [Required]
+        public int Revision { get; set; }
 
         [Required]
         public string PSK { get; set; }
@@ -41,7 +44,7 @@ namespace QuestTracker.API.Infrastructure
 
         public virtual ICollection<Reminder> Reminders { get; set; }
 
-        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager,
+        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser, int> manager,
             string authenticationType)
         {
             var userIdentity = await manager.CreateIdentityAsync(this, authenticationType);
@@ -49,5 +52,26 @@ namespace QuestTracker.API.Infrastructure
             // userIdentity.AddClaim(new Claim("PSK", PSK));
             return userIdentity;
         }
+    }
+
+    public class CustomUserRole: IdentityUserRole<int> { }
+    public class CustomUserClaim: IdentityUserClaim<int> { }
+    public class CustomUserLogin: IdentityUserLogin<int> { }
+
+    public class CustomRole : IdentityRole<int, CustomUserRole>
+    {
+        public CustomRole() { }
+        public CustomRole(string name) { Name = name; }
+    }
+
+    public class CustomUserStore : UserStore<ApplicationUser, CustomRole, int, CustomUserLogin, CustomUserRole,
+        CustomUserClaim>
+    {
+        public CustomUserStore(AuthContext context): base(context) { }
+    }
+
+    public class CustomRoleStore : RoleStore<CustomRole, int, CustomUserRole>
+    {
+        public CustomRoleStore(AuthContext context) : base(context) { }
     }
 }

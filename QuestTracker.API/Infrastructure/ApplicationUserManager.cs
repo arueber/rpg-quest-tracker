@@ -10,9 +10,9 @@ using QuestTracker.API.Services;
 
 namespace QuestTracker.API.Infrastructure
 {
-    public class ApplicationUserManager: UserManager<ApplicationUser>
+    public class ApplicationUserManager: UserManager<ApplicationUser, int>
     {
-        public ApplicationUserManager(IUserStore<ApplicationUser> store) : base(store)
+        public ApplicationUserManager(IUserStore<ApplicationUser, int> store) : base(store)
         {
         }
 
@@ -20,9 +20,9 @@ namespace QuestTracker.API.Infrastructure
             IOwinContext context)
         {
             var authContext = context.Get<AuthContext>();
-            var appUserManager = new ApplicationUserManager(new UserStore<ApplicationUser>(authContext));
+            var appUserManager = new ApplicationUserManager(new CustomUserStore(context.Get<AuthContext>()));
 
-            appUserManager.UserValidator = new UserValidator<ApplicationUser>(appUserManager)
+            appUserManager.UserValidator = new UserValidator<ApplicationUser, int>(appUserManager)
             {
                 AllowOnlyAlphanumericUserNames = false,
                 RequireUniqueEmail = true
@@ -42,7 +42,7 @@ namespace QuestTracker.API.Infrastructure
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)
             {
-                appUserManager.UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser>(dataProtectionProvider.Create("ASP.NET Identity"))
+                appUserManager.UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser, int>(dataProtectionProvider.Create("ASP.NET Identity"))
                 {
                     //Code for email confirmation and login link
                     TokenLifespan = TimeSpan.FromMinutes(15)

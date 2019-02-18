@@ -37,7 +37,7 @@ namespace QuestTracker.API.Models
             };
         }
 
-        public RoleReturnModel Create(IdentityRole appRole)
+        public RoleReturnModel Create(CustomRole appRole)
         {
             return new RoleReturnModel
             {
@@ -51,7 +51,7 @@ namespace QuestTracker.API.Models
     public class UserReturnModel
     {
         public string Url { get; set; }
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string UserName { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }
@@ -65,7 +65,7 @@ namespace QuestTracker.API.Models
     public class RoleReturnModel
     {
         public string Url { get; set; }
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
     }
 }

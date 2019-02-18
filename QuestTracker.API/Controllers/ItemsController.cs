@@ -39,7 +39,7 @@ namespace QuestTracker.API.Controllers
 
         // PUT: api/Items/5
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutItem(string id, Item item)
+        public async Task<IHttpActionResult> PutItem(int id, Item item)
         {
             if (!ModelState.IsValid)
             {
@@ -127,7 +127,7 @@ namespace QuestTracker.API.Controllers
             base.Dispose(disposing);
         }
 
-        private bool ItemExists(string id)
+        private bool ItemExists(int id)
         {
             return db.Items.Count(e => e.Id == id) > 0;
         }

@@ -197,6 +197,7 @@
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Entities\Client.cs" />
     <Compile Include="Entities\Folder.cs" />
+    <Compile Include="Entities\Positions.cs" />
     <Compile Include="Entities\Reminder.cs" />
     <Compile Include="Entities\Project.cs" />
     <Compile Include="Entities\ProjectUser.cs" />
@@ -217,16 +218,12 @@
     <Compile Include="Infrastructure\ExtendedClaimsProvider.cs" />
     <Compile Include="Infrastructure\ItemRepository.cs" />
     <Compile Include="Infrastructure\ITrackingRepository.cs" />
-    <Compile Include="Migrations\201902121810239_InitialCreate.cs" />
-    <Compile Include="Migrations\201902121810239_InitialCreate.Designer.cs">
-      <DependentUpon>201902121810239_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201902131948177_ItemsAndNodes.cs" />
-    <Compile Include="Migrations\201902131948177_ItemsAndNodes.Designer.cs">
-      <DependentUpon>201902131948177_ItemsAndNodes.cs</DependentUpon>
+    <Compile Include="Migrations\201902181700181_InitialCreate.cs" />
+    <Compile Include="Migrations\201902181700181_InitialCreate.Designer.cs">
+      <DependentUpon>201902181700181_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Infrastructure\ApplicationUser.cs" />
+    <Compile Include="Infrastructure\IdentityModels.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\ClaimBindingModel.cs" />
     <Compile Include="Models\Enum.cs" />
@@ -253,11 +250,8 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201902121810239_InitialCreate.resx">
-      <DependentUpon>201902121810239_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201902131948177_ItemsAndNodes.resx">
-      <DependentUpon>201902131948177_ItemsAndNodes.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201902181700181_InitialCreate.resx">
+      <DependentUpon>201902181700181_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

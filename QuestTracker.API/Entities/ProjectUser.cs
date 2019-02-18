@@ -9,13 +9,13 @@ namespace QuestTracker.API.Entities
 {
     public class ProjectUser
     {
-        public string ProjectId { get; set; }
+        public int ProjectId { get; set; }
         public virtual Project Project { get; set; }
 
-        public string ApplicationUserId { get; set; }
-        public virtual ApplicationUser ApplicationUser { get; set; }
+        public int ApplicationUserId { get; set; }
+        public virtual ApplicationUser User { get; set; }
 
-        public string FolderId { get; set; }
+        public int? FolderId { get; set; }
         public virtual Folder Folder { get; set; }
 
         [Required]
@@ -26,5 +26,11 @@ namespace QuestTracker.API.Entities
         
         [Required]
         public bool DoNoDisturb { get; set; }
+
+        [Required]
+        public bool Accepted { get; set; }
+
+        [Required]
+        public int Revision { get; set; }
     }
 }

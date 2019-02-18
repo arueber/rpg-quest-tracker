@@ -32,6 +32,7 @@ namespace QuestTracker.API.Providers
             {
                 var refreshTokenLifeTime = context.OwinContext.Get<string>("as:clientRefreshTokenLifeTime");
 
+
                 var token = new RefreshToken()
                 {
                     Id = CryptoHelper.GetHash(refreshTokenId),
