@@ -218,6 +218,7 @@
     <Compile Include="Infrastructure\ExtendedClaimsProvider.cs" />
     <Compile Include="Infrastructure\ItemRepository.cs" />
     <Compile Include="Infrastructure\ITrackingRepository.cs" />
+    <Compile Include="Infrastructure\ITreeRepository.cs" />
     <Compile Include="Migrations\201902181700181_InitialCreate.cs" />
     <Compile Include="Migrations\201902181700181_InitialCreate.Designer.cs">
       <DependentUpon>201902181700181_InitialCreate.cs</DependentUpon>
