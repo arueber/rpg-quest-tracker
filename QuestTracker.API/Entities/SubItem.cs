@@ -29,7 +29,7 @@ namespace QuestTracker.API.Entities
         public int Revision { get; set; }
 
         [Required]
-        public int ItemId { get; set; }
-        public virtual Item Item { get; set; }
+        public int ParentItemId { get; set; }
+        public virtual Item ParentItem { get; set; }
     }
 }

@@ -36,7 +36,7 @@ namespace QuestTracker.API.Infrastructure
         {
             // Project User
             modelBuilder.Entity<ProjectUser>()
-                .HasKey(pu => new {pu.ApplicationUserId, pu.ProjectId});
+                .HasKey(pu => new {pu.ProjectId, pu.ApplicationUserId});
 
             modelBuilder.Entity<ProjectUser>()
                 .HasRequired(pu => pu.User)
@@ -67,6 +67,11 @@ namespace QuestTracker.API.Infrastructure
                 .HasForeignKey(n => n.AssignedUserId)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<Item>()
+                .HasMany<SubItem>(i => i.SubItems)
+                .WithRequired(s => s.ParentItem)
+                .HasForeignKey<int>(s => s.ParentItemId);
+
             // Reminders
             modelBuilder.Entity<Reminder>()
                 .HasRequired(n => n.Item)
@@ -78,6 +83,13 @@ namespace QuestTracker.API.Infrastructure
                 .HasRequired(n => n.ApplicationUser)
                 .WithMany(a => a.Reminders)
                 .HasForeignKey(n => n.ApplicationUserId)
+                .WillCascadeOnDelete(false);
+
+            // SubItems
+            modelBuilder.Entity<SubItem>()
+                .HasRequired<Item>(n => n.ParentItem)
+                .WithMany(a => a.SubItems)
+                .HasForeignKey<int>(n => n.ParentItemId)
                 .WillCascadeOnDelete(false);
 
             // Tree Nodes

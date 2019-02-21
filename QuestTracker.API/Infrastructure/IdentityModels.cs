@@ -49,7 +49,7 @@ namespace QuestTracker.API.Infrastructure
         {
             var userIdentity = await manager.CreateIdentityAsync(this, authenticationType);
             // Add custom user claims here
-            // userIdentity.AddClaim(new Claim("PSK", PSK));
+            
             return userIdentity;
         }
     }

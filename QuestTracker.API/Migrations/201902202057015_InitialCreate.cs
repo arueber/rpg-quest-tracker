@@ -26,14 +26,17 @@ namespace QuestTracker.API.Migrations
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
-                        ApplicationUserId = c.Int(nullable: false),
+                        CreatedByUserId = c.Int(nullable: false),
                         Name = c.String(nullable: false, maxLength: 100),
                         IsActive = c.Boolean(nullable: false),
                         Weight = c.Int(nullable: false),
+                        CreatedAt = c.DateTime(nullable: false),
+                        UpdatedAt = c.DateTime(nullable: false),
+                        Revision = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.AspNetUsers", t => t.ApplicationUserId, cascadeDelete: true)
-                .Index(t => t.ApplicationUserId);
+                .ForeignKey("dbo.AspNetUsers", t => t.CreatedByUserId, cascadeDelete: true)
+                .Index(t => t.CreatedByUserId);
             
             CreateTable(
                 "dbo.AspNetUsers",
@@ -43,6 +46,7 @@ namespace QuestTracker.API.Migrations
                         FirstName = c.String(maxLength: 100),
                         LastName = c.String(maxLength: 100),
                         JoinDate = c.DateTime(nullable: false),
+                        Revision = c.Int(nullable: false),
                         PSK = c.String(nullable: false),
                         IsActive = c.Boolean(nullable: false),
                         PhotoURL = c.String(maxLength: 255),
@@ -72,19 +76,26 @@ namespace QuestTracker.API.Migrations
                         URL = c.String(maxLength: 255),
                         Notes = c.String(),
                         StartDueDate = c.DateTime(),
-                        Duration = c.Time(precision: 7),
-                        Repetition = c.Time(precision: 7),
+                        DurationType = c.Int(),
+                        DurationCount = c.Int(nullable: false),
+                        RepetitionType = c.Int(),
+                        RepetitionCount = c.Int(nullable: false),
+                        Revision = c.Int(nullable: false),
+                        CreatedAt = c.DateTime(nullable: false),
+                        CreatedByUserId = c.Int(nullable: false),
                         AssignedUserId = c.Int(),
-                        CompletionDate = c.DateTime(),
-                        CompletionApplicationUserId = c.Int(),
+                        CompletedAt = c.DateTime(),
+                        CompletedByUserId = c.Int(),
                         ProjectId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.AspNetUsers", t => t.AssignedUserId)
-                .ForeignKey("dbo.AspNetUsers", t => t.CompletionApplicationUserId)
+                .ForeignKey("dbo.AspNetUsers", t => t.CompletedByUserId)
+                .ForeignKey("dbo.AspNetUsers", t => t.CreatedByUserId, cascadeDelete: true)
                 .ForeignKey("dbo.Projects", t => t.ProjectId, cascadeDelete: true)
+                .Index(t => t.CreatedByUserId)
                 .Index(t => t.AssignedUserId)
-                .Index(t => t.CompletionApplicationUserId)
+                .Index(t => t.CompletedByUserId)
                 .Index(t => t.ProjectId);
             
             CreateTable(
@@ -94,6 +105,8 @@ namespace QuestTracker.API.Migrations
                         Id = c.Int(nullable: false, identity: true),
                         Name = c.String(nullable: false, maxLength: 100),
                         IsActive = c.Boolean(nullable: false),
+                        CreatedAt = c.DateTime(nullable: false),
+                        Revision = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id);
             
@@ -107,11 +120,13 @@ namespace QuestTracker.API.Migrations
                         Weight = c.Int(nullable: false),
                         IsOwner = c.Boolean(nullable: false),
                         DoNoDisturb = c.Boolean(nullable: false),
+                        Accepted = c.Boolean(nullable: false),
+                        Revision = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => new { t.ApplicationUserId, t.ProjectId })
-                .ForeignKey("dbo.AspNetUsers", t => t.ApplicationUserId, cascadeDelete: true)
                 .ForeignKey("dbo.Folders", t => t.FolderId)
                 .ForeignKey("dbo.Projects", t => t.ProjectId, cascadeDelete: true)
+                .ForeignKey("dbo.AspNetUsers", t => t.ApplicationUserId, cascadeDelete: true)
                 .Index(t => t.ApplicationUserId)
                 .Index(t => t.ProjectId)
                 .Index(t => t.FolderId);
@@ -122,6 +137,10 @@ namespace QuestTracker.API.Migrations
                     {
                         Id = c.Int(nullable: false, identity: true),
                         Date = c.DateTime(nullable: false),
+                        Revision = c.Int(nullable: false),
+                        CreatedAt = c.DateTime(nullable: false),
+                        CreatedByDeviceUDID = c.String(),
+                        UpdatedAt = c.DateTime(nullable: false),
                         ApplicationUserId = c.Int(nullable: false),
                         ItemId = c.Int(nullable: false),
                     })
@@ -138,11 +157,16 @@ namespace QuestTracker.API.Migrations
                         Id = c.Int(nullable: false, identity: true),
                         Name = c.String(nullable: false, maxLength: 100),
                         CompletionDate = c.DateTime(),
-                        ItemId = c.Int(nullable: false),
+                        CreatedAt = c.DateTime(nullable: false),
+                        CreatedByUserId = c.Int(nullable: false),
+                        Revision = c.Int(nullable: false),
+                        ParentItemId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Items", t => t.ItemId, cascadeDelete: true)
-                .Index(t => t.ItemId);
+                .ForeignKey("dbo.AspNetUsers", t => t.CreatedByUserId, cascadeDelete: true)
+                .ForeignKey("dbo.Items", t => t.ParentItemId)
+                .Index(t => t.CreatedByUserId)
+                .Index(t => t.ParentItemId);
             
             CreateTable(
                 "dbo.TreeNodes",
@@ -150,6 +174,9 @@ namespace QuestTracker.API.Migrations
                     {
                         Id = c.Int(nullable: false),
                         Name = c.String(nullable: false, maxLength: 100),
+                        CreatedAt = c.DateTime(nullable: false),
+                        UpdatedAt = c.DateTime(nullable: false),
+                        Revision = c.Int(nullable: false),
                         ParentNodeId = c.Int(),
                         ItemId = c.Int(nullable: false),
                     })
@@ -227,18 +254,20 @@ namespace QuestTracker.API.Migrations
             DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
             DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
-            DropForeignKey("dbo.Folders", "ApplicationUserId", "dbo.AspNetUsers");
+            DropForeignKey("dbo.Folders", "CreatedByUserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.TreeNodes", "Id", "dbo.Items");
             DropForeignKey("dbo.TreeNodes", "ParentNodeId", "dbo.TreeNodes");
-            DropForeignKey("dbo.SubItems", "ItemId", "dbo.Items");
+            DropForeignKey("dbo.SubItems", "ParentItemId", "dbo.Items");
+            DropForeignKey("dbo.SubItems", "CreatedByUserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.Reminders", "ItemId", "dbo.Items");
             DropForeignKey("dbo.Reminders", "ApplicationUserId", "dbo.AspNetUsers");
+            DropForeignKey("dbo.ProjectUsers", "ApplicationUserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.ProjectUsers", "ProjectId", "dbo.Projects");
             DropForeignKey("dbo.ProjectUsers", "FolderId", "dbo.Folders");
-            DropForeignKey("dbo.ProjectUsers", "ApplicationUserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.Items", "ProjectId", "dbo.Projects");
-            DropForeignKey("dbo.Items", "CompletionApplicationUserId", "dbo.AspNetUsers");
+            DropForeignKey("dbo.Items", "CreatedByUserId", "dbo.AspNetUsers");
+            DropForeignKey("dbo.Items", "CompletedByUserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.Items", "AssignedUserId", "dbo.AspNetUsers");
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
             DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
@@ -247,17 +276,19 @@ namespace QuestTracker.API.Migrations
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropIndex("dbo.TreeNodes", new[] { "ParentNodeId" });
             DropIndex("dbo.TreeNodes", new[] { "Id" });
-            DropIndex("dbo.SubItems", new[] { "ItemId" });
+            DropIndex("dbo.SubItems", new[] { "ParentItemId" });
+            DropIndex("dbo.SubItems", new[] { "CreatedByUserId" });
             DropIndex("dbo.Reminders", new[] { "ItemId" });
             DropIndex("dbo.Reminders", new[] { "ApplicationUserId" });
             DropIndex("dbo.ProjectUsers", new[] { "FolderId" });
             DropIndex("dbo.ProjectUsers", new[] { "ProjectId" });
             DropIndex("dbo.ProjectUsers", new[] { "ApplicationUserId" });
             DropIndex("dbo.Items", new[] { "ProjectId" });
-            DropIndex("dbo.Items", new[] { "CompletionApplicationUserId" });
+            DropIndex("dbo.Items", new[] { "CompletedByUserId" });
             DropIndex("dbo.Items", new[] { "AssignedUserId" });
+            DropIndex("dbo.Items", new[] { "CreatedByUserId" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
-            DropIndex("dbo.Folders", new[] { "ApplicationUserId" });
+            DropIndex("dbo.Folders", new[] { "CreatedByUserId" });
             DropTable("dbo.AspNetRoles");
             DropTable("dbo.RefreshTokens");
             DropTable("dbo.AspNetUserRoles");

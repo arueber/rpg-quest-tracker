@@ -15,15 +15,16 @@ namespace QuestTracker.API.Infrastructure
 
             var daysInWork = (DateTime.Now.Date - user.JoinDate).TotalDays;
 
-            if (daysInWork > 90)
-            {
-                claims.Add(CreateClaim("FTE", "1"));
+            // Assigning claims to the user on the fly
+            //if (daysInWork > 90)
+            //{
+            //    claims.Add(CreateClaim("FTE", "1"));
 
-            }
-            else
-            {
-                claims.Add(CreateClaim("FTE", "0"));
-            }
+            //}
+            //else
+            //{
+            //    claims.Add(CreateClaim("FTE", "0"));
+            //}
 
             return claims;
         }

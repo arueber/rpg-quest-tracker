@@ -12,56 +12,57 @@ namespace QuestTracker.API.Infrastructure
     public interface ITrackingRepository
     {
         #region Folders   
-        bool Insert(Folder folder);
-        bool Update(Folder originalFolder, Folder updatedFolder);
-        bool DeleteFolder(int id);
-        Folder GetFolder(int folderId);
+        Task<bool> Insert(Folder folder);
+        Task<bool> Update(Folder originalFolder, Folder updatedFolder);
+        Task<bool> DeleteFolder(int folderId);
+        Task<Folder> GetFolder(int folderId);
         IQueryable<Folder> GetFoldersByUser(int userId);
         #endregion
 
         #region Projects
-        bool Insert(Project project);
-        bool Update(Project originalProject, Project updatedProject);
-        bool DeleteProject(int id, bool deleteFolder);
-        Project GetProject(int projectId);
+        Task<bool> Insert(Project project);
+        Task<bool> Update(Project originalProject, Project updatedProject);
+        Task<bool> DeleteProject(int projectId);
+        Task<Project> GetProject(int projectId);
         #endregion
 
 
         #region ProjectUser
-        bool Insert(ProjectUser projectUser);
-        bool Update(ProjectUser originalProjectUser, ProjectUser updatedProjectUser);
-        bool DeleteProjectUser(int projectId, int userId);
+        Task<bool> Insert(ProjectUser projectUser);
+        Task<bool> Update(ProjectUser originalProjectUser, ProjectUser updatedProjectUser);
+        Task<bool> DeleteProjectUser(int projectId, int userId);
+        Task<ProjectUser> GetProjectUser(int projectId, int userId);
         IQueryable<ProjectUser> GetProjectsByFolder(int folderId);
         IQueryable<ProjectUser> GetProjectsByUser(int userId);
         IQueryable<ProjectUser> GetUsersByProject(int projectId);
         #endregion
 
         #region Task Item
-        bool Insert(Item item);
-        bool Update(Item originalItem, Item updatedItem);
-        bool DeleteItem(int id);
-        Item GetItem(int itemId);
+        Task<bool> Insert(Item item);
+        Task<bool> Update(Item originalItem, Item updatedItem);
+        Task<bool> DeleteItem(int itemId);
+        Task<Item> GetItem(int itemId);
         IQueryable<Item> GetItemsByProject(int projectId, bool completedOnly);
         IQueryable<Item> GetItemsByUser(int userId, bool assignedOnly, bool priorityFlagOnly);
         IQueryable<Item> GetItemsByUser(int userId, DateTime today, TimeDelayType durationType, int durationCount, bool includeOverdue);
         #endregion
 
         #region Reminders
-        bool Insert(Reminder reminder);
-        bool Update(Reminder originalReminder, Reminder updatedReminder);
-        bool DeleteReminder(int id);
-        Reminder GetReminder(int id);
-        Reminder GetReminderByItemAndUser(int itemId, int userId);
+        Task<bool> Insert(Reminder reminder);
+        Task<bool> Update(Reminder originalReminder, Reminder updatedReminder);
+        Task<bool> DeleteReminder(int reminderId);
+        Task<Reminder> GetReminder(int reminderId);
+        Task<Reminder> GetReminderByItemAndUser(int itemId, int userId);
         #endregion
 
         #region Sub Item
-        bool Insert(SubItem item);
-        bool Update(SubItem originalSubItem, SubItem updatedSubItem);
-        bool DeleteSubItem(int id);
-        SubItem GetSubItem(int subItemId);
+        Task<bool> Insert(SubItem subItem);
+        Task<bool> Update(SubItem originalSubItem, SubItem updatedSubItem);
+        Task<bool> DeleteSubItem(int subItemId);
+        Task<SubItem> GetSubItem(int subItemId);
         IQueryable<SubItem> GetSubItemsByItem(int itemId);
         #endregion
 
-        bool SaveAll();
+        Task<bool> SaveAll();
     }
 }

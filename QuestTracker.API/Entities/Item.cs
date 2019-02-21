@@ -32,10 +32,10 @@ namespace QuestTracker.API.Entities
         public DateTime? StartDueDate { get; set; }
 
         public TimeDelayType? DurationType { get; set; }
-        public int DurationCount { get; set; }
+        public int? DurationCount { get; set; }
 
         public TimeDelayType? RepetitionType { get; set; }
-        public int RepetitionCount { get; set; }
+        public int? RepetitionCount { get; set; }
 
         [Required]
         public int Revision { get; set; }
@@ -57,7 +57,7 @@ namespace QuestTracker.API.Entities
 
         [Required]
         public int ProjectId { get; set; }
-        public virtual Project Projects { get; set; }
+        public virtual Project Project { get; set; }
 
         public virtual ICollection<SubItem> SubItems { get; set; }
 

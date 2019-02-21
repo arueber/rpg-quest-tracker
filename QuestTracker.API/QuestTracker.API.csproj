@@ -219,9 +219,10 @@
     <Compile Include="Infrastructure\ItemRepository.cs" />
     <Compile Include="Infrastructure\ITrackingRepository.cs" />
     <Compile Include="Infrastructure\ITreeRepository.cs" />
-    <Compile Include="Migrations\201902181700181_InitialCreate.cs" />
-    <Compile Include="Migrations\201902181700181_InitialCreate.Designer.cs">
-      <DependentUpon>201902181700181_InitialCreate.cs</DependentUpon>
+    <Compile Include="Infrastructure\TrackingRepository.cs" />
+    <Compile Include="Migrations\201902202057015_InitialCreate.cs" />
+    <Compile Include="Migrations\201902202057015_InitialCreate.Designer.cs">
+      <DependentUpon>201902202057015_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Infrastructure\IdentityModels.cs" />
@@ -251,8 +252,8 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201902181700181_InitialCreate.resx">
-      <DependentUpon>201902181700181_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201902202057015_InitialCreate.resx">
+      <DependentUpon>201902202057015_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

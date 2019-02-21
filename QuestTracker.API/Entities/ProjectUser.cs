@@ -9,9 +9,11 @@ namespace QuestTracker.API.Entities
 {
     public class ProjectUser
     {
+        [Required]
         public int ProjectId { get; set; }
         public virtual Project Project { get; set; }
 
+        [Required]
         public int ApplicationUserId { get; set; }
         public virtual ApplicationUser User { get; set; }
 
