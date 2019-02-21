@@ -16,7 +16,7 @@ namespace QuestTracker.API.Controllers
 {
     public class ItemsController : BaseApiController
     {
-        private AuthContext db = new AuthContext();
+        private ApplicationContext db = new ApplicationContext();
 
         // GET: api/Items
         public IQueryable<Item> GetItems()

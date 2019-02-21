@@ -6,16 +6,17 @@ using System.Web;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using QuestTracker.API.Entities;
+using QuestTracker.API.Infrastructure;
 
-namespace QuestTracker.API.Infrastructure
+namespace QuestTracker.API.Repositories
 {
     public class AuthorizationRepository:IDisposable
     {
-        private AuthContext _ctx;
+        private ApplicationContext _ctx;
 
         public AuthorizationRepository()
         { 
-            _ctx = new AuthContext();
+            _ctx = new ApplicationContext();
         }
 
         public Client FindClient(string clientId)

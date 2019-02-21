@@ -8,18 +8,18 @@ using QuestTracker.API.Entities;
 
 namespace QuestTracker.API.Infrastructure
 {
-    public class AuthContext : IdentityDbContext<ApplicationUser, CustomRole, int, CustomUserLogin, CustomUserRole, CustomUserClaim>
+    public class ApplicationContext : IdentityDbContext<ApplicationUser, CustomRole, int, CustomUserLogin, CustomUserRole, CustomUserClaim>
     {
-        public AuthContext()
+        public ApplicationContext()
             : base("AuthContext")
         {
             Configuration.ProxyCreationEnabled = false;
             Configuration.LazyLoadingEnabled = false;
         }
 
-        public static AuthContext Create()
+        public static ApplicationContext Create()
         {
-            return new AuthContext();
+            return new ApplicationContext();
         }
 
         public DbSet<Client> Clients { get; set; }

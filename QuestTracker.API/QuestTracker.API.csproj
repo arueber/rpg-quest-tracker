@@ -196,6 +196,13 @@
     <Compile Include="Controllers\RefreshTokensController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Entities\Client.cs" />
+    <Compile Include="Entities\Extensions\FolderExtensions.cs" />
+    <Compile Include="Entities\Extensions\ItemExtensions.cs" />
+    <Compile Include="Entities\Extensions\ProjectExtensions.cs" />
+    <Compile Include="Entities\Extensions\ProjectUserExtensions.cs" />
+    <Compile Include="Entities\Extensions\ReminderExtensions.cs" />
+    <Compile Include="Entities\Extensions\SubItemExtensions.cs" />
+    <Compile Include="Entities\Extensions\TreeNodeExtensions.cs" />
     <Compile Include="Entities\Folder.cs" />
     <Compile Include="Entities\Positions.cs" />
     <Compile Include="Entities\Reminder.cs" />
@@ -212,14 +219,27 @@
     <Compile Include="Controllers\AccountsController.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Infrastructure\ApplicationUserManager.cs" />
-    <Compile Include="Infrastructure\AuthContext.cs" />
+    <Compile Include="Infrastructure\ApplicationContext.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
-    <Compile Include="Infrastructure\AuthorizationRepository.cs" />
+    <Compile Include="Repositories\FolderRepository.cs" />
+    <Compile Include="Repositories\IFolderRepository.cs" />
+    <Compile Include="Repositories\IProjectUserRepository.cs" />
+    <Compile Include="Repositories\IReminderRepository.cs" />
+    <Compile Include="Repositories\IRepositoryWrapper.cs" />
+    <Compile Include="Repositories\AuthorizationRepository.cs" />
     <Compile Include="Infrastructure\ExtendedClaimsProvider.cs" />
-    <Compile Include="Infrastructure\ItemRepository.cs" />
-    <Compile Include="Infrastructure\ITrackingRepository.cs" />
-    <Compile Include="Infrastructure\ITreeRepository.cs" />
-    <Compile Include="Infrastructure\TrackingRepository.cs" />
+    <Compile Include="Repositories\IItemRepository.cs" />
+    <Compile Include="Repositories\IProjectRepository.cs" />
+    <Compile Include="Infrastructure\IRepositoryBase.cs" />
+    <Compile Include="Repositories\ISubItemRepository.cs" />
+    <Compile Include="Repositories\ItemRepository.cs" />
+    <Compile Include="Repositories\ITreeRepository.cs" />
+    <Compile Include="Infrastructure\RepositoryBase.cs" />
+    <Compile Include="Repositories\ProjectRepository.cs" />
+    <Compile Include="Repositories\ProjectUserRepository.cs" />
+    <Compile Include="Repositories\ReminderRepository.cs" />
+    <Compile Include="Repositories\RepositoryWrapper.cs" />
+    <Compile Include="Repositories\SubItemRepository.cs" />
     <Compile Include="Migrations\201902202057015_InitialCreate.cs" />
     <Compile Include="Migrations\201902202057015_InitialCreate.Designer.cs">
       <DependentUpon>201902202057015_InitialCreate.cs</DependentUpon>
@@ -236,6 +256,7 @@
     <Compile Include="Providers\CustomJwtFormat.cs" />
     <Compile Include="Providers\CustomOAuthProvider.cs" />
     <Compile Include="Providers\CustomRefreshTokenProvider.cs" />
+    <Compile Include="Repositories\TreeNodeRepository.cs" />
     <Compile Include="Services\EmailService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

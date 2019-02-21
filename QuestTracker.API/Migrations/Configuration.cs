@@ -13,7 +13,7 @@ namespace QuestTracker.API.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<QuestTracker.API.Infrastructure.AuthContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<QuestTracker.API.Infrastructure.ApplicationContext>
     {
         public Configuration()
         {
@@ -21,14 +21,14 @@ namespace QuestTracker.API.Migrations
             ContextKey = "QuestTracker.API.AuthContext";
         }
 
-        protected override void Seed(QuestTracker.API.Infrastructure.AuthContext context)
+        protected override void Seed(QuestTracker.API.Infrastructure.ApplicationContext context)
         {
             //  This method will be called after migrating to the latest version.
 
             var manager = new UserManager<ApplicationUser, int>(new UserStore<ApplicationUser, CustomRole, int, CustomUserLogin, CustomUserRole,
-                CustomUserClaim> (new AuthContext()));
+                CustomUserClaim> (new ApplicationContext()));
 
-            var roleManager = new ApplicationRoleManager(new CustomRoleStore(new AuthContext()));
+            var roleManager = new ApplicationRoleManager(new CustomRoleStore(new ApplicationContext()));
 
             var user = new ApplicationUser()
             {

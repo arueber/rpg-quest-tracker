@@ -19,7 +19,7 @@ namespace QuestTracker.API.Infrastructure
         public static ApplicationRoleManager Create(IdentityFactoryOptions<ApplicationRoleManager> options,
             IOwinContext context)
         {
-            var appRoleManager = new ApplicationRoleManager(new CustomRoleStore(context.Get<AuthContext>()));
+            var appRoleManager = new ApplicationRoleManager(new CustomRoleStore(context.Get<ApplicationContext>()));
 
             return appRoleManager;
         }

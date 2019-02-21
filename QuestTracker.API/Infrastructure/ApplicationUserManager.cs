@@ -19,8 +19,8 @@ namespace QuestTracker.API.Infrastructure
         public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options,
             IOwinContext context)
         {
-            var authContext = context.Get<AuthContext>();
-            var appUserManager = new ApplicationUserManager(new CustomUserStore(context.Get<AuthContext>()));
+            var authContext = context.Get<ApplicationContext>();
+            var appUserManager = new ApplicationUserManager(new CustomUserStore(context.Get<ApplicationContext>()));
 
             appUserManager.UserValidator = new UserValidator<ApplicationUser, int>(appUserManager)
             {

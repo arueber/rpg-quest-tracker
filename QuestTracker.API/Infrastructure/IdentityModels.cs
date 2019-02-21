@@ -67,11 +67,11 @@ namespace QuestTracker.API.Infrastructure
     public class CustomUserStore : UserStore<ApplicationUser, CustomRole, int, CustomUserLogin, CustomUserRole,
         CustomUserClaim>
     {
-        public CustomUserStore(AuthContext context): base(context) { }
+        public CustomUserStore(ApplicationContext context): base(context) { }
     }
 
     public class CustomRoleStore : RoleStore<CustomRole, int, CustomUserRole>
     {
-        public CustomRoleStore(AuthContext context) : base(context) { }
+        public CustomRoleStore(ApplicationContext context) : base(context) { }
     }
 }

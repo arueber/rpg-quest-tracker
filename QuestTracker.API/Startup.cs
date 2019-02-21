@@ -14,6 +14,7 @@ using System.Web;
 using System.Web.Http;
 using QuestTracker.API.Providers;
 using QuestTracker.API.Infrastructure;
+using QuestTracker.API.Repositories;
 
 [assembly: OwinStartup(typeof(QuestTracker.API.Startup))]
 namespace QuestTracker.API
@@ -43,7 +44,7 @@ namespace QuestTracker.API
         public void ConfigureOAuthTokenGeneration(IAppBuilder app)
         {
             // Configure the db context and user manager to use a single instance per request
-            app.CreatePerOwinContext(AuthContext.Create);
+            app.CreatePerOwinContext(ApplicationContext.Create);
             app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
             app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);
 
