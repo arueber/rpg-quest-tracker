@@ -25,7 +25,7 @@ namespace QuestTracker.API.Controllers
         [Route("")]
         public async Task<IHttpActionResult> Delete(string tokenId)
         {
-            var result = await this.AuthRepository.RemoveRefreshToken(tokenId);
+            var result = await this.AuthRepository.RemoveRefreshTokenAsync(tokenId);
             if (result)
             {
                 return Ok();

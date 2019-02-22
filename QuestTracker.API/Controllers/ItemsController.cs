@@ -10,25 +10,72 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using QuestTracker.API.Entities;
+using QuestTracker.API.Filters;
 using QuestTracker.API.Infrastructure;
+using QuestTracker.API.Models;
 
 namespace QuestTracker.API.Controllers
 {
+    [Authorize]
+    [RoutePrefix("api/Items")]
     public class ItemsController : BaseApiController
     {
         private ApplicationContext db = new ApplicationContext();
 
-        // GET: api/Items
-        public IQueryable<Item> GetItems()
+        [Authorize(Users = "Admin")]
+        [TwoFactorAuthorize]
+        [Route("All")]
+        public IHttpActionResult GetAllItems()
         {
-            return db.Items;
+            return Ok(db.Items);
+        }
+
+        // GET api/Items
+        [Route("")]
+        public IQueryable<ItemDTO> GetItems()
+        {
+            var items = from i in db.Items
+                select new ItemDTO()
+                {
+                    Id = i.Id,
+                    Name = i.Name,
+                    Weight = i.Weight,
+                    PriorityFlag = i.PriorityFlag,
+                    URL = i.URL,
+                    Notes = i.Notes,
+                    StartDueDate = i.StartDueDate,
+                    DurationType = i.DurationType,
+                    DurationCount = i.DurationCount,
+                    RepetitionType = i.RepetitionType,
+                    RepetitionCount = i.RepetitionCount,
+                    Revision = i.Revision,
+                    AssignedUserName = i.AssignedUser.FirstName
+                };
+            return items;
         }
 
         // GET: api/Items/5
-        [ResponseType(typeof(Item))]
-        public async Task<IHttpActionResult> GetItem(string id)
+        [ResponseType(typeof(ItemDTO))]
+        public async Task<IHttpActionResult> GetItem(int id)
         {
-            Item item = await db.Items.FindAsync(id);
+            var item = await db.Items.Include(i => i.AssignedUser).Select(i =>
+                new ItemDTO()
+                {
+                    Id = i.Id,
+                    Name = i.Name,
+                    Weight = i.Weight,
+                    PriorityFlag = i.PriorityFlag,
+                    URL = i.URL,
+                    Notes = i.Notes,
+                    StartDueDate = i.StartDueDate,
+                    DurationType = i.DurationType,
+                    DurationCount = i.DurationCount,
+                    RepetitionType = i.RepetitionType,
+                    RepetitionCount = i.RepetitionCount,
+                    Revision = i.Revision,
+                    AssignedUserName = i.AssignedUser.FirstName
+                }).SingleOrDefaultAsync(i => i.Id == id);
+
             if (item == null)
             {
                 return NotFound();
@@ -73,7 +120,7 @@ namespace QuestTracker.API.Controllers
         }
 
         // POST: api/Items
-        [ResponseType(typeof(Item))]
+        [ResponseType(typeof(ItemDTO))]
         public async Task<IHttpActionResult> PostItem(Item item)
         {
             if (!ModelState.IsValid)
@@ -99,11 +146,30 @@ namespace QuestTracker.API.Controllers
                 }
             }
 
-            return CreatedAtRoute("DefaultApi", new { id = item.Id }, item);
+            db.Entry(item).Reference(x => x.AssignedUser).Load();
+
+            var dto = new ItemDTO()
+            {
+                Id = item.Id,
+                Name = item.Name,
+                Weight = item.Weight,
+                PriorityFlag = item.PriorityFlag,
+                URL = item.URL,
+                Notes = item.Notes,
+                StartDueDate = item.StartDueDate,
+                DurationType = item.DurationType,
+                DurationCount = item.DurationCount,
+                RepetitionType = item.RepetitionType,
+                RepetitionCount = item.RepetitionCount,
+                Revision = item.Revision,
+                AssignedUserName = item.AssignedUser.FirstName
+            };
+
+            return CreatedAtRoute("DefaultApi", new { id = item.Id }, dto);
         }
 
         // DELETE: api/Items/5
-        [ResponseType(typeof(Item))]
+        [ResponseType(typeof(ItemDTO))]
         public async Task<IHttpActionResult> DeleteItem(string id)
         {
             Item item = await db.Items.FindAsync(id);
@@ -115,7 +181,24 @@ namespace QuestTracker.API.Controllers
             db.Items.Remove(item);
             await db.SaveChangesAsync();
 
-            return Ok(item);
+            var dto = new ItemDTO()
+            {
+                Id = item.Id,
+                Name = item.Name,
+                Weight = item.Weight,
+                PriorityFlag = item.PriorityFlag,
+                URL = item.URL,
+                Notes = item.Notes,
+                StartDueDate = item.StartDueDate,
+                DurationType = item.DurationType,
+                DurationCount = item.DurationCount,
+                RepetitionType = item.RepetitionType,
+                RepetitionCount = item.RepetitionCount,
+                Revision = item.Revision,
+                AssignedUserName = item.AssignedUser.FirstName
+            };
+
+            return Ok(dto);
         }
 
         protected override void Dispose(bool disposing)

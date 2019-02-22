@@ -6,7 +6,7 @@ using System.Web;
 
 namespace QuestTracker.API.Entities
 {
-    public class Project
+    public class Project:IModifiedEntity
     {
         [Key]
         public int Id { get; set; }
@@ -20,6 +20,9 @@ namespace QuestTracker.API.Entities
 
         [Required]
         public DateTime CreatedAt { get; set; }
+
+        [Required]
+        public DateTime UpdatedAt { get; set; }
 
         [Required]
         public int Revision { get; set; }

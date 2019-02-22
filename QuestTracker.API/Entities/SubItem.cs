@@ -7,7 +7,7 @@ using QuestTracker.API.Infrastructure;
 
 namespace QuestTracker.API.Entities
 {
-    public class SubItem
+    public class SubItem: IModifiedEntity
     {
         [Key]
         public int Id { get; set; }
@@ -24,6 +24,9 @@ namespace QuestTracker.API.Entities
         [Required]
         public int CreatedByUserId { get; set; }
         public virtual ApplicationUser CreatedByUser { get; set; }
+
+        [Required]
+        public DateTime UpdatedAt { get; set; }
 
         [Required]
         public int Revision { get; set; }

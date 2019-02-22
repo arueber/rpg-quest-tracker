@@ -8,7 +8,7 @@ using QuestTracker.API.Models;
 
 namespace QuestTracker.API.Entities
 {
-    public class Folder
+    public class Folder: IModifiedEntity
     {
         [Key]
         public int Id { get; set; }

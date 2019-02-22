@@ -9,7 +9,7 @@ using QuestTracker.API.Models;
 
 namespace QuestTracker.API.Entities
 {
-    public class Item
+    public class Item: IModifiedEntity
     {
         [Key]
         public int Id { get; set; }
@@ -42,6 +42,9 @@ namespace QuestTracker.API.Entities
 
         [Required]
         public DateTime CreatedAt { get; set; }
+
+        [Required]
+        public DateTime UpdatedAt { get; set; }
 
         [Required]
         public int CreatedByUserId { get; set; }

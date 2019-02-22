@@ -16,7 +16,6 @@ using QuestTracker.API.Infrastructure;
 using QuestTracker.API.Models;
 using QuestTracker.API.Helpers;
 using QuestTracker.API.Providers;
-using QuestTracker.API.Repositories;
 
 namespace QuestTracker.API.Controllers
 {

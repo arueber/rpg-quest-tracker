@@ -7,7 +7,7 @@ using QuestTracker.API.Infrastructure;
 
 namespace QuestTracker.API.Entities
 {
-    public class Reminder
+    public class Reminder: IModifiedEntity
     {
         [Key]
         public int Id { get; set; }

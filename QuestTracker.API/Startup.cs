@@ -14,7 +14,6 @@ using System.Web;
 using System.Web.Http;
 using QuestTracker.API.Providers;
 using QuestTracker.API.Infrastructure;
-using QuestTracker.API.Repositories;
 
 [assembly: OwinStartup(typeof(QuestTracker.API.Startup))]
 namespace QuestTracker.API

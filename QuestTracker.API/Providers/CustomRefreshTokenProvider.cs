@@ -52,7 +52,7 @@ namespace QuestTracker.API.Providers
                 token.ProtectedTicket = System.Text.Encoding.Default.GetString(serializer.Serialize(context.Ticket));
                 
 
-                var result = await _repo.AddRefreshToken(token);
+                var result = await _repo.AddRefreshTokenAsync(token);
 
                 if (result)
                 {
@@ -85,7 +85,7 @@ namespace QuestTracker.API.Providers
                     Microsoft.Owin.Security.DataHandler.Serializer.TicketSerializer serializer = new Microsoft.Owin.Security.DataHandler.Serializer.TicketSerializer();
                     context.SetTicket(serializer.Deserialize(System.Text.Encoding.Default.GetBytes(refreshToken.ProtectedTicket)));
 
-                    var result = await _repo.RemoveRefreshToken(hashedTokenId);
+                    var result = await _repo.RemoveRefreshTokenAsync(hashedTokenId);
                 }
             }
         }

@@ -19,7 +19,6 @@ namespace QuestTracker.API.Controllers
         private ApplicationRoleManager _appRoleManager = null;
 
         private AuthorizationRepository _authRepo = null;
-        private ItemRepository _itemRepo = null;
 
         protected const string _appName = "Quest Tracker";
 
@@ -45,11 +44,7 @@ namespace QuestTracker.API.Controllers
         {
             get { return _authRepo ?? new AuthorizationRepository(); }
         }
-
-        protected ItemRepository ItemRepository
-        {
-            get { return _itemRepo ?? new ItemRepository(); }
-        }
+        
 
         public BaseApiController()
         {

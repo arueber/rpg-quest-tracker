@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Web;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -20,6 +21,29 @@ namespace QuestTracker.API.Infrastructure
         public static ApplicationContext Create()
         {
             return new ApplicationContext();
+        }
+
+        public override int SaveChanges()
+        {
+            HandleChangeTracking();
+            return base.SaveChanges();
+        }
+
+        private void HandleChangeTracking()
+        {
+            foreach (var entity in ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified))
+            {
+                UpdateTrackedEntity(entity);
+            }
+        }
+
+        private static void UpdateTrackedEntity(DbEntityEntry entityEntry)
+        {
+            var trackUpdateClass = entityEntry.Entity as IModifiedEntity;
+            if (trackUpdateClass == null) return;
+            trackUpdateClass.UpdatedAt = DateTime.UtcNow;
+            if (entityEntry.State == EntityState.Added) trackUpdateClass.CreatedAt = DateTime.UtcNow;
         }
 
         public DbSet<Client> Clients { get; set; }
