@@ -6,7 +6,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.AspNet.Identity;
+using QuestTracker.API.Entities;
 using QuestTracker.API.Infrastructure;
+using QuestTracker.API.Services;
 
 namespace QuestTracker.API.Controllers
 {
@@ -14,21 +16,19 @@ namespace QuestTracker.API.Controllers
     [RoutePrefix("api/Folders")]
     public class FoldersController : BaseApiController
     {
+        
+
         [Authorize(Roles = "Admin")]
         [Route("all", Name = "GetAllFolders")]
         public IHttpActionResult GetAllFolders()
         {
-            //var roles = this.AppRoleManager.;
-
-            //return Ok(roles);
-
-            return Ok();
+            return Ok(this.AppContext.Folders);
         }
 
         [Route("", Name = "GetUserFolders")]
         public async Task<IHttpActionResult> GetUserFolders()
         {
-            ApplicationUser user = await this.AppUserManager.FindByNameAsync(User.Identity.Name);
+            ApplicationUser user = await this.AppUserManager.FindByIdAsync(User.Identity.GetUserId<int>());
 
             if (user == null)
             {

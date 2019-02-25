@@ -14,6 +14,8 @@ namespace QuestTracker.API.Controllers
 {
     public class BaseApiController : ApiController
     {
+        private ApplicationContext _ctx;
+
         private ModelFactory _modelFactory;
         private ApplicationUserManager _appUserManager = null;
         private ApplicationRoleManager _appRoleManager = null;
@@ -44,11 +46,13 @@ namespace QuestTracker.API.Controllers
         {
             get { return _authRepo ?? new AuthorizationRepository(); }
         }
-        
 
-        public BaseApiController()
+        protected ApplicationContext AppContext
         {
+            get { return _ctx?? new ApplicationContext(); }
         }
+
+        public BaseApiController(){ }
 
         protected ModelFactory TheModelFactory
         {

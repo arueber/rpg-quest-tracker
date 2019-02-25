@@ -201,6 +201,7 @@
     <Compile Include="Controllers\ClaimsController.cs" />
     <Compile Include="Controllers\FoldersController.cs" />
     <Compile Include="Controllers\ItemsController.cs" />
+    <Compile Include="Controllers\ProjectsController.cs" />
     <Compile Include="Controllers\RefreshTokensController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Entities\Client.cs" />
