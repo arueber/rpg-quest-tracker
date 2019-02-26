@@ -206,6 +206,7 @@
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Entities\Client.cs" />
     <Compile Include="Entities\Extensions\FolderExtensions.cs" />
+    <Compile Include="Entities\Extensions\IModifiedEntityExtensions.cs" />
     <Compile Include="Entities\Extensions\ItemExtensions.cs" />
     <Compile Include="Entities\Extensions\ProjectExtensions.cs" />
     <Compile Include="Entities\Extensions\ProjectUserExtensions.cs" />

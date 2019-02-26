@@ -12,6 +12,7 @@ using System.Web.Http.Description;
 using Microsoft.AspNet.Identity;
 using QuestTracker.API.Entities;
 using QuestTracker.API.Infrastructure;
+using QuestTracker.API.Models;
 
 namespace QuestTracker.API.Controllers
 {
@@ -24,7 +25,8 @@ namespace QuestTracker.API.Controllers
         /// <summary>
         /// Get all Projects to which a user has permission.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>List of Projects</returns>
+        [HttpGet]
         public async Task<IHttpActionResult> GetProjects()
         {
             ApplicationUser user = await this.AppUserManager.FindByIdAsync(User.Identity.GetUserId<int>());
@@ -33,13 +35,20 @@ namespace QuestTracker.API.Controllers
             {
                 return NotFound();
             }
-            var projects = user.ProjectUsers.Where(p => p.Accepted).OrderBy(p => p.Weight).Select(p => p.Project).ToList();
+            var projects = user.ProjectUsers.Where(p => p.Accepted).OrderBy(p => p.Weight).Select(p => new ProjectDTO()
+            {
+                Id = p.Project.Id,
+                CreatedAt = p.Project.CreatedAt.ToString("O"),
+                Title = p.Project.Title,
+                Revision = p.Project.Revision
+            }).ToList();
 
             return Ok(projects);
         }
 
         // GET: api/Projects/5
-        [ResponseType(typeof(Project))]
+        [ResponseType(typeof(ProjectDTO))]
+        [HttpGet]
         public async Task<IHttpActionResult> GetProject(int id)
         {
             Project project = await this.AppContext.Projects.FindAsync(id);
@@ -47,79 +56,131 @@ namespace QuestTracker.API.Controllers
             {
                 return NotFound();
             }
+            var dto = new ProjectDTO()
+            {
+                Id = project.Id,
+                CreatedAt = project.CreatedAt.ToString("O"),
+                Title = project.Title,
+                Revision = project.Revision
+            };
 
-            return Ok(project);
+            return Ok(dto);
         }
 
-        // PATCH: api/Projects/5
-        [ResponseType(typeof(void))]
-        [HttpPatch]
-        public async Task<IHttpActionResult> PatchProject(int id, Project project)
+        // PUT: api/Projects/5
+        [ResponseType(typeof(ProjectDTO))]
+        [HttpPut]
+        public async Task<IHttpActionResult> PutProject(int id, ProjectPutOrDeleteBindingModel project)
         {
-
-            // TODO Convert this to an actual Patch - how to impliment JsonPatch
+            // 02/26/2019 | .Net Core includes Patch capabilities but there's no production-level packages to add Patch in Web Api 2 right now.
 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
-            if (id != project.Id)
+            Project projectToPatch = await this.AppContext.Projects.FindAsync(id);
+            if (projectToPatch == null)
+            {
+                return NotFound();
+            }
+            
+            if (projectToPatch.Revision != project.Revision)
             {
                 return BadRequest();
             }
 
-            this.AppContext.Entry(project).State = EntityState.Modified;
+            projectToPatch.Title = project.Title;
+            projectToPatch.Revision = projectToPatch.Revision + 1;
+            projectToPatch.UpdatedAt = DateTime.UtcNow;
+            this.AppContext.Entry(projectToPatch).State = EntityState.Modified;
 
             try
             {
                 await this.AppContext.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
-                if (!ProjectExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                Console.WriteLine(e);
+                throw;
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            var dto = new ProjectDTO()
+            {
+                Id = projectToPatch.Id,
+                Title = projectToPatch.Title,
+                Revision = projectToPatch.Revision
+            };
+
+            return Ok(dto);
         }
 
         // POST: api/Projects
-        [ResponseType(typeof(Project))]
+        [ResponseType(typeof(ProjectDTO))]
         [HttpPost]
-        public async Task<IHttpActionResult> PostProject(Project project)
+        public async Task<IHttpActionResult> PostProject([FromBody]ProjectCreateBindingModel project)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            Project createdProject = new Project(project.Title);
+            try
+            {
+                this.AppContext.Projects.Add(createdProject);
+                await this.AppContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            var dto = new ProjectDTO()
+            {
+                Id = createdProject.Id,
+                CreatedAt = createdProject.CreatedAt.ToString("O"),
+                Title = createdProject.Title,
+                Revision = createdProject.Revision
+            };
 
-            this.AppContext.Projects.Add(project);
-            await this.AppContext.SaveChangesAsync();
-
-            return CreatedAtRoute("DefaultApi", new { id = project.Id }, project);
+            return CreatedAtRoute("DefaultApi", new { id = createdProject.Id }, dto);
         }
 
         // DELETE: api/Projects/5
-        [ResponseType(typeof(Project))]
-        public async Task<IHttpActionResult> DeleteProject(int id)
+        [HttpDelete]
+        public async Task<IHttpActionResult> DeleteProject(int id, ProjectPutOrDeleteBindingModel project)
         {
-            Project project = await this.AppContext.Projects.FindAsync(id);
-            if (project == null)
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            
+            Project projectToDelete = await this.AppContext.Projects.FindAsync(id);
+            if (projectToDelete == null)
             {
                 return NotFound();
             }
 
-            this.AppContext.Projects.Remove(project);
-            await this.AppContext.SaveChangesAsync();
+            if (projectToDelete.Revision != project.Revision)
+            {
+                return BadRequest("Revision does not match. Fetch the entity's current state and try again");
+            }
 
-            return Ok(project);
+            projectToDelete.IsActive = false;
+            projectToDelete.UpdatedAt = DateTime.UtcNow;
+            projectToDelete.Revision = projectToDelete.Revision + 1;
+            this.AppContext.Entry(projectToDelete).State = EntityState.Modified;
+            try
+            {
+                await this.AppContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
+
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         protected override void Dispose(bool disposing)

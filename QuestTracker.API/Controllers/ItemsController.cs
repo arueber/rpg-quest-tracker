@@ -38,7 +38,7 @@ namespace QuestTracker.API.Controllers
                 select new ItemDTO()
                 {
                     Id = i.Id,
-                    Name = i.Name,
+                    Title = i.Title,
                     Weight = i.Weight,
                     PriorityFlag = i.PriorityFlag,
                     URL = i.URL,
@@ -62,7 +62,7 @@ namespace QuestTracker.API.Controllers
                 new ItemDTO()
                 {
                     Id = i.Id,
-                    Name = i.Name,
+                    Title = i.Title,
                     Weight = i.Weight,
                     PriorityFlag = i.PriorityFlag,
                     URL = i.URL,
@@ -120,6 +120,7 @@ namespace QuestTracker.API.Controllers
         }
 
         // POST: api/Items
+        [HttpPost]
         [ResponseType(typeof(ItemDTO))]
         public async Task<IHttpActionResult> PostItem(Item item)
         {
@@ -151,7 +152,7 @@ namespace QuestTracker.API.Controllers
             var dto = new ItemDTO()
             {
                 Id = item.Id,
-                Name = item.Name,
+                Title = item.Title,
                 Weight = item.Weight,
                 PriorityFlag = item.PriorityFlag,
                 URL = item.URL,
@@ -184,7 +185,7 @@ namespace QuestTracker.API.Controllers
             var dto = new ItemDTO()
             {
                 Id = item.Id,
-                Name = item.Name,
+                Title = item.Title,
                 Weight = item.Weight,
                 PriorityFlag = item.PriorityFlag,
                 URL = item.URL,

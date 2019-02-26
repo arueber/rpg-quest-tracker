@@ -13,7 +13,7 @@ namespace QuestTracker.API.Entities
 
         [Required]
         [MaxLength(100)]
-        public string Name { get; set; }
+        public string Title { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; }

@@ -18,7 +18,7 @@ namespace QuestTracker.API.Entities
 
         [Required]
         [MaxLength(100)]
-        public string Name { get; set; }
+        public string Title { get; set; }
 
         [Required]
         public bool IsActive { get; set; }
@@ -38,5 +38,18 @@ namespace QuestTracker.API.Entities
         public virtual ApplicationUser CreatedByUser { get; set; }
 
         public virtual ICollection<ProjectUser> ProjectUsers { get; set; }
+
+        public Folder() { }
+
+        public Folder(string title, int userId)
+        {
+            Title = title;
+            CreatedByUserId = userId;
+            IsActive = true;
+            Weight = 0;
+            CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
+            Revision = 0;
+        }
     }
 }
