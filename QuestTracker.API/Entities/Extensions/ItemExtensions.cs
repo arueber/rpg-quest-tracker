@@ -10,7 +10,7 @@ namespace QuestTracker.API.Entities.Extensions
     {
         public static void Map(this Item dbItem, Item item)
         {
-            dbItem.Name = item.Name;
+            dbItem.Title = item.Title;
             dbItem.Weight = item.Weight;
             dbItem.PriorityFlag = item.PriorityFlag;
             dbItem.URL = item.URL;

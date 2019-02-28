@@ -9,7 +9,7 @@ namespace QuestTracker.API.Entities.Extensions
     {
         public static void Map(this SubItem dbSubItem, SubItem subItem)
         {
-            dbSubItem.Name = subItem.Name;
+            dbSubItem.Title = subItem.Title;
             dbSubItem.CompletionDate = subItem.CompletionDate;
             dbSubItem.CreatedAt = subItem.CreatedAt;
             dbSubItem.CreatedByUserId = subItem.CreatedByUserId;

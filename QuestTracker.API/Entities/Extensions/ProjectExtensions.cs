@@ -9,7 +9,7 @@ namespace QuestTracker.API.Entities.Extensions
     {
         public static void Map(this Project dbProject, Project project)
         {
-            dbProject.Name = project.Name;
+            dbProject.Title = project.Title;
             dbProject.IsActive = project.IsActive;
             dbProject.CreatedAt = project.CreatedAt;
             dbProject.Revision = project.Revision;

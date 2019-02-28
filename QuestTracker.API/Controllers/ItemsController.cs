@@ -43,13 +43,13 @@ namespace QuestTracker.API.Controllers
                     PriorityFlag = i.PriorityFlag,
                     URL = i.URL,
                     Notes = i.Notes,
-                    StartDueDate = i.StartDueDate,
+                    StartDueDate = i.StartDueDate.HasValue? i.StartDueDate.Value.ToString("O"):"",
                     DurationType = i.DurationType,
                     DurationCount = i.DurationCount,
                     RepetitionType = i.RepetitionType,
                     RepetitionCount = i.RepetitionCount,
                     Revision = i.Revision,
-                    AssignedUserName = i.AssignedUser.FirstName
+                    AssignedId = i.AssignedUser.Id
                 };
             return items;
         }
@@ -67,13 +67,13 @@ namespace QuestTracker.API.Controllers
                     PriorityFlag = i.PriorityFlag,
                     URL = i.URL,
                     Notes = i.Notes,
-                    StartDueDate = i.StartDueDate,
+                    StartDueDate = i.StartDueDate.HasValue ? i.StartDueDate.Value.ToString("O") : "",
                     DurationType = i.DurationType,
                     DurationCount = i.DurationCount,
                     RepetitionType = i.RepetitionType,
                     RepetitionCount = i.RepetitionCount,
                     Revision = i.Revision,
-                    AssignedUserName = i.AssignedUser.FirstName
+                    AssignedId = i.AssignedUser.Id
                 }).SingleOrDefaultAsync(i => i.Id == id);
 
             if (item == null)
@@ -157,13 +157,13 @@ namespace QuestTracker.API.Controllers
                 PriorityFlag = item.PriorityFlag,
                 URL = item.URL,
                 Notes = item.Notes,
-                StartDueDate = item.StartDueDate,
+                StartDueDate = item.StartDueDate?.ToString("O"),
                 DurationType = item.DurationType,
                 DurationCount = item.DurationCount,
                 RepetitionType = item.RepetitionType,
                 RepetitionCount = item.RepetitionCount,
                 Revision = item.Revision,
-                AssignedUserName = item.AssignedUser.FirstName
+                AssignedId = item.AssignedUser.Id
             };
 
             return CreatedAtRoute("DefaultApi", new { id = item.Id }, dto);
@@ -190,13 +190,13 @@ namespace QuestTracker.API.Controllers
                 PriorityFlag = item.PriorityFlag,
                 URL = item.URL,
                 Notes = item.Notes,
-                StartDueDate = item.StartDueDate,
+                StartDueDate = item.StartDueDate?.ToString("O") ?? "",
                 DurationType = item.DurationType,
                 DurationCount = item.DurationCount,
                 RepetitionType = item.RepetitionType,
                 RepetitionCount = item.RepetitionCount,
                 Revision = item.Revision,
-                AssignedUserName = item.AssignedUser.FirstName
+                AssignedId = item.AssignedUser.Id
             };
 
             return Ok(dto);
@@ -214,6 +214,28 @@ namespace QuestTracker.API.Controllers
         private bool ItemExists(int id)
         {
             return db.Items.Count(e => e.Id == id) > 0;
+        }
+
+        private bool RecurrenceIsValid(string type, int? count)
+        {
+            return (type != "" && count != null);
+        }
+
+        private TimeDelayType? GetRecurrenceType(string type)
+        {
+            switch (type)
+            {
+                case "day":
+                    return TimeDelayType.Day;
+                case "week":
+                    return TimeDelayType.Week;
+                case "month":
+                    return TimeDelayType.Month;
+                case "year":
+                    return TimeDelayType.Year;
+                default:
+                    return null;
+            }
         }
     }
 }

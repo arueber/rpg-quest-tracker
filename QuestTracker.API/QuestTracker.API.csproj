@@ -204,6 +204,7 @@
     <Compile Include="Controllers\ProjectsController.cs" />
     <Compile Include="Controllers\RefreshTokensController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
+    <Compile Include="Controllers\SubItemsController.cs" />
     <Compile Include="Entities\Client.cs" />
     <Compile Include="Entities\Extensions\FolderExtensions.cs" />
     <Compile Include="Entities\Extensions\IModifiedEntityExtensions.cs" />

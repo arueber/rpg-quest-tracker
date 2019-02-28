@@ -10,7 +10,7 @@ namespace QuestTracker.API.Entities.Extensions
         public static void Map(this Folder dbFolder, Folder folder)
         {
             dbFolder.CreatedByUserId = folder.CreatedByUserId;
-            dbFolder.Name = folder.Name;
+            dbFolder.Title = folder.Title;
             dbFolder.IsActive = folder.IsActive;
             dbFolder.Weight = folder.Weight;
             dbFolder.CreatedAt = folder.CreatedAt;

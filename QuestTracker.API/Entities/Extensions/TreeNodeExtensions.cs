@@ -9,7 +9,7 @@ namespace QuestTracker.API.Entities.Extensions
     {
         public static void Map(this TreeNode dbTreeNode, TreeNode treeNode)
         {
-            dbTreeNode.Name = treeNode.Name;
+            dbTreeNode.Title = treeNode.Title;
             dbTreeNode.CreatedAt = treeNode.CreatedAt;
             dbTreeNode.UpdatedAt = treeNode.UpdatedAt;
             dbTreeNode.Revision = treeNode.Revision;
