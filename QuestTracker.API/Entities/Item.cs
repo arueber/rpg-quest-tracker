@@ -38,6 +38,9 @@ namespace QuestTracker.API.Entities
         public int? RepetitionCount { get; set; }
 
         [Required]
+        public bool IsActive { get; set; }
+
+        [Required]
         public int Revision { get; set; }
 
         [Required]
@@ -68,5 +71,29 @@ namespace QuestTracker.API.Entities
 
         public virtual TreeNode TreeNode { get; set; }
 
+        public Item() { }
+
+        public Item(string title, int projectId, int userId, bool completed, bool priorityFlag, int? assignedId, int? completedId, DateTime? startDueDate, TimeDelayType? durationType, int? durationCount, TimeDelayType? repetitionType, int? repetitionCount)
+        {
+            Title = title;
+            ProjectId = projectId;
+            IsActive = true;
+            CreatedAt = DateTime.UtcNow;
+            CreatedByUserId = userId;
+            UpdatedAt = DateTime.UtcNow;
+            Weight = 0;
+            PriorityFlag = priorityFlag;
+            if (completed) {
+                CompletedAt = DateTime.UtcNow;
+                CompletedByUserId = completedId;
+            }
+            AssignedUserId = assignedId;
+            StartDueDate = startDueDate;
+            DurationType = durationType;
+            DurationCount = durationCount;
+            RepetitionType = repetitionType;
+            RepetitionCount = repetitionCount;
+            Revision = 0;
+        }
     }
 }

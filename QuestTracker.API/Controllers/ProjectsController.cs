@@ -86,7 +86,7 @@ namespace QuestTracker.API.Controllers
             
             if (projectToPatch.Revision != project.Revision)
             {
-                return BadRequest();
+                return BadRequest("Revision does not match. Fetch the entity's current state and try again");
             }
 
             projectToPatch.Title = project.Title;
@@ -124,9 +124,9 @@ namespace QuestTracker.API.Controllers
                 return BadRequest(ModelState);
             }
             Project createdProject = new Project(project.Title);
+            this.AppContext.Projects.Add(createdProject);
             try
             {
-                this.AppContext.Projects.Add(createdProject);
                 await this.AppContext.SaveChangesAsync();
             }
             catch (Exception e)

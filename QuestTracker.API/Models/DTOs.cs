@@ -108,13 +108,19 @@ namespace QuestTracker.API.Models
         [MaxLength(255)]
         public string Title { get; set; }
         public int? AssignedId { get; set; }
-        public bool IsCompleted { get; set; }
+        public bool? IsCompleted { get; set; }
         public string StartDueDate { get; set; }
+
+        public string DurationType { get; set; }
+
+        [Range(1, int.MaxValue)]
+        public int? DurationCount { get; set; }
+
         public string RepetitionType { get; set; }
 
         [Range(1, int.MaxValue)]
         public int? RepetitionCount { get; set; }
-        public bool PriorityFlag { get; set; }
+        public bool? PriorityFlag { get; set; }
     }
 
     public class ItemPutOrDeleteBindingModel
@@ -127,6 +133,11 @@ namespace QuestTracker.API.Models
         public int? AssignedId { get; set; }
         public bool IsCompleted { get; set; }
         public string StartDueDate { get; set; }
+        public string DurationType { get; set; }
+
+        [Range(1, int.MaxValue)]
+        public int? DurationCount { get; set; }
+
         public string RepetitionType { get; set; }
 
         [Range(1, int.MaxValue)]
