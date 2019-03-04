@@ -24,16 +24,56 @@ namespace QuestTracker.API.Controllers
         [Authorize(Users = "Admin")]
         [TwoFactorAuthorize]
         [Route("All")]
+        [HttpGet]
         public IHttpActionResult GetAllItems()
         {
             return Ok(this.AppContext.Items);
         }
 
         // GET api/Items
-        [Route("")]
-        public IQueryable<ItemDTO> GetItems()
+        [HttpGet]
+        public async Task<IHttpActionResult> GetItems(int projectId)
         {
-            var items = from i in this.AppContext.Items
+            Project project = await this.AppContext.Projects.FindAsync(projectId);
+            if (project == null)
+            {
+                return NotFound();
+            }
+            
+            var items = from i in project.Items
+                        select new ItemDTO()
+                {
+                    Id = i.Id,
+                    Title = i.Title,
+                    Weight = i.Weight,
+                    PriorityFlag = i.PriorityFlag,
+                    URL = i.URL,
+                    Notes = i.Notes,
+                    StartDueDate = i.StartDueDate?.ToString("O") ?? "",
+                    DurationType = i.DurationType,
+                    DurationCount = i.DurationCount,
+                    RepetitionType = i.RepetitionType,
+                    RepetitionCount = i.RepetitionCount,
+                    RepetitionUsesRollingDate = i.RepetitionUsesRollingDate,
+                    Revision = i.Revision,
+                    AssignedId = i.AssignedUser.Id
+                };
+            return Ok(items);
+        }
+
+        // GET api/Items
+        [HttpGet]
+        public async Task<IHttpActionResult> GetItems(bool completed, int projectId)
+        {
+            Project project = await this.AppContext.Projects.FindAsync(projectId);
+            if (project == null)
+            {
+                return NotFound();
+            }
+
+            var items = from i in project.Items.Where(i => completed
+                ? (i.CompletedAt != null && i.CompletedByUserId != null)
+                : (i.CompletedAt == null || i.CompletedByUserId == null)).ToList()
                 select new ItemDTO()
                 {
                     Id = i.Id,
@@ -42,16 +82,18 @@ namespace QuestTracker.API.Controllers
                     PriorityFlag = i.PriorityFlag,
                     URL = i.URL,
                     Notes = i.Notes,
-                    StartDueDate = i.StartDueDate.HasValue? i.StartDueDate.Value.ToString("O"):"",
+                    StartDueDate = i.StartDueDate?.ToString("O") ?? "",
                     DurationType = i.DurationType,
                     DurationCount = i.DurationCount,
                     RepetitionType = i.RepetitionType,
                     RepetitionCount = i.RepetitionCount,
+                    RepetitionUsesRollingDate = i.RepetitionUsesRollingDate,
                     Revision = i.Revision,
                     AssignedId = i.AssignedUser.Id
                 };
-            return items;
+            return Ok(items);
         }
+
 
         // GET: api/Items/5
         [ResponseType(typeof(ItemDTO))]
@@ -71,6 +113,7 @@ namespace QuestTracker.API.Controllers
                     DurationCount = i.DurationCount,
                     RepetitionType = i.RepetitionType,
                     RepetitionCount = i.RepetitionCount,
+                    RepetitionUsesRollingDate = i.RepetitionUsesRollingDate,
                     Revision = i.Revision,
                     AssignedId = i.AssignedUser.Id
                 }).SingleOrDefaultAsync(i => i.Id == id);
@@ -106,7 +149,8 @@ namespace QuestTracker.API.Controllers
             ApplicationUser user = await this.AppUserManager.FindByIdAsync(User.Identity.GetUserId<int>());
 
             itemToPatch.Title = item.Title;
-            
+            itemToPatch.PriorityFlag = item.PriorityFlag;
+
             if (item.IsCompleted && !itemToPatch.CompletedAt.HasValue)
             {
                 itemToPatch.CompletedAt = DateTime.UtcNow;
@@ -116,7 +160,28 @@ namespace QuestTracker.API.Controllers
                 itemToPatch.CompletedAt = null;
                 itemToPatch.CompletedByUserId = null;
             }
-            // TODO finish this
+
+            if (item.ProjectId.HasValue) itemToPatch.ProjectId = item.ProjectId.Value;
+            if (item.AssignedId.HasValue) itemToPatch.AssignedUserId = item.AssignedId.Value;
+            if (string.IsNullOrEmpty(item.StartDueDate))
+            {
+                DateTime? startDueDate = TryParseNullable(item.StartDueDate);
+                itemToPatch.StartDueDate = startDueDate;
+            }
+            
+            if (TimeFrameIsValid(item.DurationType, item.DurationCount))
+            {
+                itemToPatch.DurationType = GetTimeFrameType(item.DurationType);
+                itemToPatch.DurationCount = item.DurationCount;
+            }
+            
+            if (TimeFrameIsValid(item.RepetitionType, item.RepetitionCount))
+            {
+                itemToPatch.RepetitionType = GetTimeFrameType(item.RepetitionType);
+                itemToPatch.RepetitionCount = item.RepetitionCount;
+                itemToPatch.RepetitionUsesRollingDate = item.RepetitionUsesRollingDate;
+            }
+
             foreach (string removeAttribute in item.RemoveAttributes)
             {
                 switch (removeAttribute)
@@ -124,30 +189,54 @@ namespace QuestTracker.API.Controllers
                     case "AssignedId":
                         itemToPatch.AssignedUserId = null;
                         continue;
+                    case "StartDueDate":
+                        itemToPatch.StartDueDate = null;
+                        continue;
+                    case "Duration":
+                        itemToPatch.DurationType = null;
+                        itemToPatch.DurationCount = null;
+                        continue;
+                    case "Repetition":
+                        itemToPatch.RepetitionType = null;
+                        itemToPatch.RepetitionCount = null;
+                        itemToPatch.RepetitionUsesRollingDate = false;
+                        continue;
                     default:
                         continue;
                 }
             }
 
-            this.AppContext.Entry(item).State = EntityState.Modified;
+            this.AppContext.Entry(itemToPatch).State = EntityState.Modified;
 
             try
             {
                 await this.AppContext.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
-                if (!ItemExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                Console.WriteLine(e);
+                throw;
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            var dto = new ItemDTO()
+            {
+                Id = itemToPatch.Id,
+                Title = itemToPatch.Title,
+                ProjectId = itemToPatch.ProjectId,
+                Weight = itemToPatch.Weight,
+                PriorityFlag = itemToPatch.PriorityFlag,
+                URL = itemToPatch.URL,
+                Notes = itemToPatch.Notes,
+                StartDueDate = itemToPatch.StartDueDate?.ToString("O"),
+                DurationType = itemToPatch.DurationType,
+                DurationCount = itemToPatch.DurationCount,
+                RepetitionType = itemToPatch.RepetitionType,
+                RepetitionCount = itemToPatch.RepetitionCount,
+                AssignedId = itemToPatch.AssignedUser.Id,
+                Revision = itemToPatch.Revision
+            };
+
+            return Ok(dto);
         }
 
         // POST: api/Items
@@ -176,14 +265,17 @@ namespace QuestTracker.API.Controllers
             }
             TimeDelayType? repetitionType = null;
             int? repetitionCount = null;
+            bool repetitionIsRolling = false;
             if (TimeFrameIsValid(item.RepetitionType, item.RepetitionCount))
             {
                 repetitionType = GetTimeFrameType(item.RepetitionType);
                 repetitionCount = item.RepetitionCount;
+                if (item.RepetitionUsesRollingDate.HasValue)
+                    repetitionIsRolling = item.RepetitionUsesRollingDate ?? false;
             }
 
             Item createdItem = new Item(item.Title, item.ProjectId, user.Id, item.IsCompleted ?? false, item.PriorityFlag ?? false, 
-                item.AssignedId, completedId, startDueDate, durationType, durationCount, repetitionType, repetitionCount);
+                item.AssignedId, completedId, startDueDate, durationType, durationCount, repetitionType, repetitionCount, repetitionIsRolling);
 
             this.AppContext.Items.Add(createdItem);
             try

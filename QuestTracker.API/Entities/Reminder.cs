@@ -32,5 +32,18 @@ namespace QuestTracker.API.Entities
         [Required]
         public int ItemId { get; set; }
         public virtual Item Item { get; set; }
+
+        public Reminder() { }
+
+        public Reminder(int itemId, DateTime date, int userId, string createdByDeviceUDID)
+        {
+            ItemId = itemId;
+            Date = date;
+            ApplicationUserId = userId;
+            CreatedByDeviceUDID = createdByDeviceUDID;
+            CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
+            Revision = 0;
+        }
     }
 }

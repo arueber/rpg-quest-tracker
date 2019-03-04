@@ -93,6 +93,7 @@ namespace QuestTracker.API.Models
         public int? DurationCount { get; set; }
         public TimeDelayType? RepetitionType { get; set; }
         public int? RepetitionCount { get; set; }
+        public bool RepetitionUsesRollingDate { get; set; }
         public int? AssignedId { get; set; }
         public string CompletedAt { get; set; }
         public string CompletedById { get; set; }
@@ -120,6 +121,7 @@ namespace QuestTracker.API.Models
 
         [Range(1, int.MaxValue)]
         public int? RepetitionCount { get; set; }
+        public bool? RepetitionUsesRollingDate { get; set; }
         public bool? PriorityFlag { get; set; }
     }
 
@@ -142,6 +144,9 @@ namespace QuestTracker.API.Models
 
         [Range(1, int.MaxValue)]
         public int? RepetitionCount { get; set; }
+
+        public bool RepetitionUsesRollingDate { get; set; }
+
         public bool PriorityFlag { get; set; }
         public string[] RemoveAttributes { get; set; }
 
@@ -157,14 +162,34 @@ public class ReminderDTO
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
+        public int ItemId { get; set; }
+        public string CreatedAt { get; set; }
+        public string UpdatedAt { get; set; }
         public int Revision { get; set; }
     }
+    public class ReminderCreateBindingModel
+    {
+        [Required]
+        public string Date { get; set; }
 
+        [Required]
+        public int ItemId { get; set; }
+
+        public string CreatedByDeviceUDID { get; set; }
+    }
+
+    public class ReminderPutOrDeleteBindingModel
+    {
+        public string Date { get; set; }
+
+        [Required]
+        public int Revision { get; set; }
+    }
     #endregion
 
     #region SubItem
 
-     public class SubItemDTO
+    public class SubItemDTO
     {
         public int Id { get; set; }
         public string Title { get; set; }
@@ -176,11 +201,34 @@ public class ReminderDTO
         public int Revision { get; set; }
     }
 
+    public class SubItemCreateBindingModel
+    {
+        [Required]
+        [MaxLength(255)]
+        public string Title { get; set; }
+
+        [Required]
+        public int ItemId { get; set; }
+
+        public bool? Completed { get; set; }
+    }
+
+    public class SubItemPutOrDeleteBindingModel
+    {
+        [MaxLength(255)]
+        public string Title { get; set; }
+
+        public bool? IsCompleted { get; set; }
+
+        [Required]
+        public int Revision { get; set; }
+    }
+
     #endregion
 
     #region TreeNode
 
-    
+
 
     #endregion
 

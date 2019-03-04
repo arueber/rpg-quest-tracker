@@ -16,7 +16,7 @@ namespace QuestTracker.API.Entities
         [MaxLength(100)]
         public string Title { get; set; }
 
-        public DateTime? CompletionDate { get; set; }
+        public DateTime? CompletedAt { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; }
@@ -29,10 +29,30 @@ namespace QuestTracker.API.Entities
         public DateTime UpdatedAt { get; set; }
 
         [Required]
+        public bool IsActive { get; set; }
+
+        [Required]
         public int Revision { get; set; }
 
         [Required]
         public int ParentItemId { get; set; }
         public virtual Item ParentItem { get; set; }
+
+        public SubItem() { }
+
+        public SubItem(string title, int parentItemId, int userId, bool completed)
+        {
+            Title = title;
+            ParentItemId = parentItemId;
+            IsActive = true;
+            CreatedAt = DateTime.UtcNow;
+            CreatedByUserId = userId;
+            UpdatedAt = DateTime.UtcNow;
+            if (completed)
+            {
+                CompletedAt = DateTime.UtcNow;
+            }
+            Revision = 0;
+        }
     }
 }

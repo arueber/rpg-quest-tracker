@@ -37,6 +37,8 @@ namespace QuestTracker.API.Entities
         public TimeDelayType? RepetitionType { get; set; }
         public int? RepetitionCount { get; set; }
 
+        public bool RepetitionUsesRollingDate { get; set; }
+
         [Required]
         public bool IsActive { get; set; }
 
@@ -73,7 +75,7 @@ namespace QuestTracker.API.Entities
 
         public Item() { }
 
-        public Item(string title, int projectId, int userId, bool completed, bool priorityFlag, int? assignedId, int? completedId, DateTime? startDueDate, TimeDelayType? durationType, int? durationCount, TimeDelayType? repetitionType, int? repetitionCount)
+        public Item(string title, int projectId, int userId, bool completed, bool priorityFlag, int? assignedId, int? completedId, DateTime? startDueDate, TimeDelayType? durationType, int? durationCount, TimeDelayType? repetitionType, int? repetitionCount, bool? repetitionIsRolling)
         {
             Title = title;
             ProjectId = projectId;
@@ -93,6 +95,7 @@ namespace QuestTracker.API.Entities
             DurationCount = durationCount;
             RepetitionType = repetitionType;
             RepetitionCount = repetitionCount;
+            RepetitionUsesRollingDate = repetitionIsRolling ?? false;
             Revision = 0;
         }
     }
