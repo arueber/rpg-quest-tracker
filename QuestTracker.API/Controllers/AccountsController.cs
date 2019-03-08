@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Web.Http;
 using System.Threading.Tasks;
+using System.Web.Http.Description;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
@@ -19,11 +20,11 @@ using QuestTracker.API.Providers;
 
 namespace QuestTracker.API.Controllers
 {
-    [RoutePrefix("api/accounts")]
+    [RoutePrefix("api/Accounts")]
     public class AccountsController : BaseApiController
     {
         [Authorize(Roles = "Admin")]
-        [Route("users")]
+        [HttpGet]
         public IHttpActionResult GetUsers()
         {
             return Ok(this.AppUserManager.Users.ToList().Select(u => this.TheModelFactory.Create(u)));
@@ -31,9 +32,10 @@ namespace QuestTracker.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [Route("user/{id:guid}", Name = "GetUserById")]
-        public async Task<IHttpActionResult> GetUser(int Id)
+        [HttpGet]
+        public async Task<IHttpActionResult> GetUser(int id)
         {
-            var user = await this.AppUserManager.FindByIdAsync(Id);
+            var user = await this.AppUserManager.FindByIdAsync(id);
 
             if (user != null)
             {
@@ -46,6 +48,7 @@ namespace QuestTracker.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [Route("user/{email}")]
+        [HttpGet]
         public async Task<IHttpActionResult> GetUserByEmail(string email)
         {
             var user = await this.AppUserManager.FindByEmailAsync(email);
@@ -62,6 +65,7 @@ namespace QuestTracker.API.Controllers
         // POST api/Accounts/Register
         [AllowAnonymous]
         [Route("register")]
+        [HttpPost]
         public async Task<IHttpActionResult> Register(CreateUserBindingModel createUserModel)
         {
             if (!ModelState.IsValid)
@@ -98,6 +102,7 @@ namespace QuestTracker.API.Controllers
         // POST api/Accounts/CreateUser
         [Authorize(Roles = "Admin")]
         [Route("createuser")]
+        [HttpPost]
         public async Task<IHttpActionResult> CreateUser(CreateUserBindingModel createUserModel)
         {
             if (!ModelState.IsValid)
@@ -301,6 +306,7 @@ namespace QuestTracker.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [Route("user/{id:guid}")]
+        [HttpDelete]
         public async Task<IHttpActionResult> DeleteUser(int id)
         {
             // Only SuperAdmin or Admin can delete users 
@@ -329,22 +335,29 @@ namespace QuestTracker.API.Controllers
         [Route("user/{id:guid}/setinactive")]
         public async Task<IHttpActionResult> SetUserInactive(int id)
         {
-            // TODO only the user themselves can set inactive
             var appUser = await this.AppUserManager.FindByIdAsync(id);
-            if (appUser != null)
+            if (appUser == null) return NotFound();
+
+            // only the user themselves can set inactive
+            ApplicationUser user = await this.AppUserManager.FindByIdAsync(User.Identity.GetUserId<int>());
+            if (user == null)
             {
-
-                appUser.IsActive = false;
-                IdentityResult result = await this.AppUserManager.UpdateAsync(appUser);
-                
-                if (!result.Succeeded)
-                {
-                    return GetErrorResult(result);
-                }
-                return Ok();
+                return NotFound();
             }
-            return NotFound();
 
+            if (appUser.Id != user.Id)
+            {
+                return BadRequest("User logged in does not have permissions to delete this user.");
+            }
+
+            appUser.IsActive = false;
+            IdentityResult result = await this.AppUserManager.UpdateAsync(appUser);
+                
+            if (!result.Succeeded)
+            {
+                return GetErrorResult(result);
+            }
+            return Ok();
         }
  
         [Authorize(Roles = "Admin")]

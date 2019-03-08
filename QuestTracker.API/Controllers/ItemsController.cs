@@ -147,7 +147,10 @@ namespace QuestTracker.API.Controllers
             }
 
             ApplicationUser user = await this.AppUserManager.FindByIdAsync(User.Identity.GetUserId<int>());
-
+            if (user == null)
+            {
+                return NotFound();
+            }
             itemToPatch.Title = item.Title;
             itemToPatch.PriorityFlag = item.PriorityFlag;
 
@@ -249,7 +252,10 @@ namespace QuestTracker.API.Controllers
                 return BadRequest(ModelState);
             }
             ApplicationUser user = await this.AppUserManager.FindByIdAsync(User.Identity.GetUserId<int>());
-
+            if (user == null)
+            {
+                return NotFound();
+            }
             int? completedId = null;
             if (item.IsCompleted ?? false)
             {

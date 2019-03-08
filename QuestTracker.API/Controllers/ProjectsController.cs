@@ -160,6 +160,15 @@ namespace QuestTracker.API.Controllers
                 return NotFound();
             }
 
+            ApplicationUser user = await this.AppUserManager.FindByIdAsync(User.Identity.GetUserId<int>());
+            if (user == null) return NotFound();
+
+            ProjectUser projectUser = user.ProjectUsers.Where(pu => pu.ProjectId == projectToDelete.Id).DefaultIfEmpty(new ProjectUser()).FirstOrDefault();
+            if (projectUser == null || projectUser.IsOwner != true)
+            {
+                return BadRequest("User does not have permissions to delete project.");
+            }
+
             if (projectToDelete.Revision != project.Revision)
             {
                 return BadRequest("Revision does not match. Fetch the entity's current state and try again");

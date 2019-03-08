@@ -236,6 +236,10 @@ namespace QuestTracker.API.Controllers
                 return BadRequest(ModelState);
             }
             ApplicationUser user = await this.AppUserManager.FindByIdAsync(User.Identity.GetUserId<int>());
+            if (user == null)
+            {
+                return NotFound();
+            }
             SubItem createdSubItem = new SubItem(subItem.Title, subItem.ItemId, user.Id, subItem.Completed?? false);
             try
             {

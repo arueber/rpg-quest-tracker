@@ -103,11 +103,15 @@ namespace QuestTracker.API.Controllers
 
             if (folderToPatch.Revision != folder.Revision)
             {
-                return BadRequest();
+                return BadRequest("Revision does not match. Fetch the entity's current state and try again");
             }
 
             folderToPatch.Title = folder.Title;
             ApplicationUser user = await this.AppUserManager.FindByIdAsync(User.Identity.GetUserId<int>());
+            if (user == null)
+            {
+                return NotFound();
+            }
             List<ProjectUser> projects = user.ProjectUsers.Where(p => p.Accepted && folder.ProjectIds.Contains(p.ProjectId)).ToList();
             folderToPatch.ProjectUsers.Clear();
             foreach (ProjectUser pu in projects)
@@ -153,6 +157,10 @@ namespace QuestTracker.API.Controllers
                 return BadRequest(ModelState);
             }
             ApplicationUser user = await this.AppUserManager.FindByIdAsync(User.Identity.GetUserId<int>());
+            if (user == null)
+            {
+                return NotFound();
+            }
             Folder createdFolder = new Folder(folder.Title, user.Id);
             try
             {

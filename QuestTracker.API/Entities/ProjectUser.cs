@@ -34,5 +34,19 @@ namespace QuestTracker.API.Entities
 
         [Required]
         public int Revision { get; set; }
+
+        public ProjectUser() { }
+
+        public ProjectUser(int projectId, int userId, bool isOwner, bool doNotDisturb)
+        {
+            ProjectId = projectId;
+            ApplicationUserId = userId;
+            Weight = 0;
+            IsOwner = isOwner;
+            DoNoDisturb = doNotDisturb;
+            Accepted = isOwner;
+            Revision = 0;
+        }
+
     }
 }

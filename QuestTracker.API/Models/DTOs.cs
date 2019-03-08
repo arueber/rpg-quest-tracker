@@ -6,9 +6,22 @@ using System.Web;
 
 namespace QuestTracker.API.Models
 {
+    #region User
+
+    public class UserDTO
+    {
+        public int Id { get; set; }
+        public string FullName { get; set; }
+        public string Email { get; set; }
+        public string JoinDate { get; set; }
+        public int Revision { get; set; }
+    }
+
+#endregion
+
     #region Folder
 
-       public class FolderDTO
+    public class FolderDTO
     {
         public int Id { get; set; }
         public string Title { get; set; }
@@ -73,7 +86,34 @@ namespace QuestTracker.API.Models
 
     #region ProjectUser
 
-    
+    public class ProjectUserDTO
+    {
+        public int UserId { get; set; }
+        public int ProjectId { get; set; }
+        public string State { get; set; }
+        public bool IsOwner { get; set; }
+        public bool DnD { get; set; }
+        public int Revision { get; set; }
+    }
+
+    public class ProjectUserCreateBindingModel
+    {
+        [Required]
+        public int ProjectId { get; set; }
+        public int? UserId { get; set; }
+        public string Email { get; set; }
+        public bool? DnD { get; set; }
+    }
+
+    public class ProjectUserPutOrDeleteBindingModel
+    {
+        public string State { get; set; }
+
+        public bool? muted { get; set; }
+
+        [Required]
+        public int Revision { get; set; }
+    }
 
     #endregion
 
@@ -161,7 +201,7 @@ namespace QuestTracker.API.Models
 public class ReminderDTO
     {
         public int Id { get; set; }
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
         public int ItemId { get; set; }
         public string CreatedAt { get; set; }
         public string UpdatedAt { get; set; }

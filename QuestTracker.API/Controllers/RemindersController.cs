@@ -11,6 +11,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Microsoft.AspNet.Identity;
 using QuestTracker.API.Entities;
+using QuestTracker.API.Filters;
 using QuestTracker.API.Infrastructure;
 using QuestTracker.API.Models;
 
@@ -20,58 +21,112 @@ namespace QuestTracker.API.Controllers
     [RoutePrefix("api/Reminders")]
     public class RemindersController : BaseApiController
     {
-        // GET: api/Reminders
-        public IQueryable<Reminder> GetReminders()
+        [Authorize(Users = "Admin")]
+        [TwoFactorAuthorize]
+        [Route("All")]
+        [HttpGet]
+        public IHttpActionResult GetAllReminders()
         {
-            return db.Reminders;
+            return Ok(this.AppContext.Reminders);
+        }
+
+        // GET: api/Reminders
+        [HttpGet]
+        public async Task<IHttpActionResult> GetReminders(int itemId)
+        {
+            Item taskItem = await this.AppContext.Items.FindAsync(itemId);
+            if (taskItem == null)
+            {
+                return NotFound();
+            }
+
+            var reminders = from r in taskItem.Reminders
+                select new ReminderDTO()
+                {
+                    Id = r.Id,
+                    Date = r.Date.ToString("O"),
+                    ItemId = r.ItemId,
+                    CreatedAt = r.CreatedAt.ToString("O"),
+                    UpdatedAt = r.UpdatedAt.ToString("O"),
+                    Revision = r.Revision
+                };
+            return Ok(reminders);
         }
 
         // GET: api/Reminders/5
-        [ResponseType(typeof(Reminder))]
+        [ResponseType(typeof(ReminderDTO))]
+        [HttpGet]
         public async Task<IHttpActionResult> GetReminder(int id)
         {
-            Reminder reminder = await db.Reminders.FindAsync(id);
+            Reminder reminder = await this.AppContext.Reminders.FindAsync(id);
             if (reminder == null)
             {
                 return NotFound();
             }
 
-            return Ok(reminder);
+            var dto = new ReminderDTO()
+            {
+                Id = reminder.Id,
+                Date = reminder.Date.ToString("O"),
+                ItemId = reminder.ItemId,
+                CreatedAt = reminder.CreatedAt.ToString("O"),
+                UpdatedAt = reminder.UpdatedAt.ToString("O"),
+                Revision = reminder.Revision
+            };
+
+            return Ok(dto);
         }
 
         // PUT: api/Reminders/5
-        [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutReminder(int id, Reminder reminder)
+        [ResponseType(typeof(ReminderDTO))]
+        [HttpPut]
+        public async Task<IHttpActionResult> PutReminder(int id, ReminderPutOrDeleteBindingModel reminder)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
-            if (id != reminder.Id)
+            Reminder reminderToPatch = await this.AppContext.Reminders.FindAsync(id);
+            if (reminderToPatch == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            db.Entry(reminder).State = EntityState.Modified;
+            if (reminderToPatch.Revision != reminder.Revision)
+            {
+                return BadRequest("Revision does not match. Fetch the entity's current state and try again");
+            }
+
+            DateTime? date = TryParseNullable(reminder.Date);
+            if (date == null)
+            {
+                return BadRequest("Date field must be a valid date.");
+            }
+            reminderToPatch.Date = (DateTime) date;
+            reminderToPatch.Revision = reminderToPatch.Revision + 1;
+            reminderToPatch.UpdatedAt = DateTime.UtcNow;
+            this.AppContext.Entry(reminderToPatch).State = EntityState.Modified;
 
             try
             {
-                await db.SaveChangesAsync();
+                await this.AppContext.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
-                if (!ReminderExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                Console.WriteLine(e);
+                throw;
             }
+            var dto = new ReminderDTO()
+            {
+                Id = reminderToPatch.Id,
+                Date = reminderToPatch.Date.ToString("O"),
+                ItemId = reminderToPatch.ItemId,
+                CreatedAt = reminderToPatch.CreatedAt.ToString("O"),
+                UpdatedAt = reminderToPatch.UpdatedAt.ToString("O"),
+                Revision = reminderToPatch.Revision
+            };
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(dto);
         }
 
         // POST: api/Reminders
@@ -89,14 +144,33 @@ namespace QuestTracker.API.Controllers
             }
 
             ApplicationUser user = await this.AppUserManager.FindByIdAsync(User.Identity.GetUserId<int>());
+            if (user == null)
+            {
+                return NotFound();
+            }
 
-            
             Reminder createdReminder = new Reminder(reminder.ItemId, (DateTime) date, user.Id, reminder.CreatedByDeviceUDID);
+            try
+            {
+                this.AppContext.Reminders.Add(createdReminder);
+                await this.AppContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            var dto = new ReminderDTO()
+            {
+                Id = createdReminder.Id,
+                Date = createdReminder.Date.ToString("O"),
+                ItemId = createdReminder.ItemId,
+                CreatedAt = createdReminder.CreatedAt.ToString("O"),
+                UpdatedAt = createdReminder.UpdatedAt.ToString("O"),
+                Revision = createdReminder.Revision
+            };
 
-            db.Reminders.Add(reminder);
-            await db.SaveChangesAsync();
-
-            return CreatedAtRoute("DefaultApi", new { id = reminder.Id }, reminder);
+            return CreatedAtRoute("DefaultApi", new { id = dto.Id }, dto);
         }
 
         // DELETE: api/Reminders/5

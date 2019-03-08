@@ -200,6 +200,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ClaimsController.cs" />
     <Compile Include="Controllers\FoldersController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ItemsController.cs" />
     <Compile Include="Controllers\ProjectsController.cs" />
     <Compile Include="Controllers\RefreshTokensController.cs" />
@@ -233,7 +234,6 @@
     <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Infrastructure\ApplicationUserManager.cs" />
     <Compile Include="Infrastructure\ApplicationContext.cs" />
-    <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Models\DTOs.cs" />
     <Compile Include="QueryObjects\QueryObjects.cs" />
     <Compile Include="Infrastructure\AuthorizationRepository.cs" />

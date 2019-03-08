@@ -31,6 +31,7 @@ namespace QuestTracker.API.Models
                 Email = appUser.Email,
                 EmailConfirmed = appUser.EmailConfirmed,
                 JoinDate = appUser.JoinDate,
+                Revision = appUser.Revision,
                 PSK = appUser.PSK,
                 Roles = _AppUserManager.GetRolesAsync(appUser.Id).Result,
                 Claims = _AppUserManager.GetClaimsAsync(appUser.Id).Result
@@ -57,6 +58,7 @@ namespace QuestTracker.API.Models
         public string Email { get; set; }
         public bool EmailConfirmed { get; set; }
         public DateTime JoinDate { get; set; }
+        public int Revision { get; set; }
         public string PSK { get; set; }
         public IList<string> Roles { get; set; }
         public IList<System.Security.Claims.Claim> Claims { get; set; }
